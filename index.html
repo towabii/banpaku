@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【アニメーション追加版】大阪・関西万博 参加国・地域 高機能リスト</title>
+    <style>
+        :root {
+            --primary-bg-color: #f8f9fa;
+            --secondary-bg-color: #fff;
+            --primary-text-color: #333;
+            --header-bg-color: #1565c0;
+            --header-text-color: #fff;
+            --link-color: #004d40;
+            --border-color: #dee2e6;
+            --table-row-even-bg: #e3f2fd;
+            --table-row-hover-bg: #bbdefb;
+            --accent-color-1: #0d47a1;
+            --accent-color-2: #c62828;
+            --shadow-color: rgba(0,0,0,0.08);
+            --switch-bg: #ccc;
+            --switch-fg: white;
+            --switch-bg-checked: #2196F3;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+            line-height: 1.6;
+            background-color: var(--primary-bg-color);
+            color: var(--primary-text-color);
+            margin: 0;
+            padding: 15px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            --primary-bg-color: #121212;
+            --secondary-bg-color: #1e1e1e;
+            --primary-text-color: #e0e0e0;
+            --header-bg-color: #37474F;
+            --link-color: #80cbc4;
+            --border-color: #424242;
+            --table-row-even-bg: #263238;
+            --table-row-hover-bg: #37474F;
+            --accent-color-1: #90caf9;
+            --accent-color-2: #ef9a9a;
+            --shadow-color: rgba(255,255,255,0.08);
+        }
+
+        /* --- アニメーション定義 --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            80% { transform: scale(1.02); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes popCheck {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: auto;
+            background: var(--secondary-bg-color);
+            padding: 20px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            transition: background-color 0.3s;
+            animation: fadeIn 0.7s ease-out;
+        }
+        h1 {
+            text-align: center;
+            color: var(--accent-color-1);
+            font-size: 2.5em;
+            border-bottom: 3px solid var(--accent-color-1);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 2em;
+            text-align: left;
+            color: var(--accent-color-2);
+            border-bottom: 2px solid var(--accent-color-2);
+            margin-top: 50px;
+            display: flex;
+            align-items: center;
+            animation: fadeIn 0.5s 0.2s ease-out backwards;
+        }
+        h2 .icon { font-size: 1.5em; margin-right: 15px; }
+
+        .main-controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: var(--primary-bg-color);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+
+        .search-box {
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1em;
+            background-color: var(--secondary-bg-color);
+            color: var(--primary-text-color);
+            min-width: 250px;
+        }
+        
+        .control-group { display: flex; align-items: center; gap: 15px; }
+
+        #counter { font-weight: bold; font-size: 1.1em; }
+
+        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--switch-bg); transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: var(--switch-fg); transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--switch-bg-checked); }
+        input:checked + .slider:before { transform: translateX(26px); }
+
+        .sort-controls { text-align: center; margin-bottom: 20px; }
+        .sort-button { background-color: #007bff; color: white; border: none; padding: 12px 24px; font-size: 1em; border-radius: 5px; cursor: pointer; margin: 5px; transition: background-color 0.3s, transform 0.2s; }
+        .sort-button:hover { background-color: #0056b3; transform: scale(1.05); }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 25px; font-size: 0.95em; }
+        th, td { border: 1px solid var(--border-color); padding: 14px; text-align: left; vertical-align: middle; }
+        th { background-color: var(--header-bg-color); color: var(--header-text-color); font-weight: 600; position: sticky; top: 0; z-index: 10; }
+        tr { transition: background-color 0.2s; }
+        tr:nth-child(even) { background-color: var(--table-row-even-bg); }
+        tr:not(.hidden):hover { background-color: var(--table-row-hover-bg); }
+        tr.hidden { display: none; }
+        tbody tr { animation: popIn 0.5s ease-out; }
+        
+        .checkbox-cell { width: 1%; text-align: center; }
+        input[type="checkbox"] { transform: scale(1.5); cursor: pointer; }
+        input[type="checkbox"]:checked { animation: popCheck 0.4s ease; }
+        
+        .flag-icon { font-size: 2.5em; text-align: center; display: block; min-width: 50px; }
+        
+        .country-link { text-decoration: none; color: var(--link-color); }
+        .country-name { font-weight: bold; }
+        .country-link:hover .country-name { text-decoration: underline; }
+        
+        .hello-col { min-width: 220px; }
+
+        ul { padding-left: 20px; margin: 0; }
+        li { margin-bottom: 5px; }
+        
+        #checked-list-container {
+            margin-top: 40px;
+            padding: 20px;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+        }
+        #checked-list { background: var(--primary-bg-color); padding: 15px; border-radius: 5px; min-height: 50px; word-break: break-all;}
+
+        #scrollTopBtn {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 99;
+            border: none;
+            outline: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 18px;
+            width: 50px;
+            height: 50px;
+            line-height: 18px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        #scrollTopBtn:hover { background-color: #0056b3; transform: scale(1.1); }
+
+        footer { text-align: center; margin-top: 40px; padding: 20px; color: #777; border-top: 1px solid var(--border-color); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>【アニメーション追加版】大阪・関西万博 参加国・地域 高機能リスト</h1>
+
+        <div class="main-controls">
+            <input type="search" id="searchBox" class="search-box" placeholder="国名、首都名などで検索...">
+            <div class="control-group">
+                <div id="counter">0 / 160</div>
+                <span>ダークモード</span>
+                <label class="switch">
+                    <input type="checkbox" id="darkModeToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="sort-controls">
+            <button id="showRegionalBtn" class="sort-button">地域別に表示</button>
+            <button id="showAlphaBtn" class="sort-button">あいうえお順に表示</button>
+        </div>
+
+        <div id="regionalView">
+            <!-- 地域別テーブルはこの中に動的に生成されます -->
+        </div>
+
+        <div id="alphaView" style="display: none;">
+            <!-- あいうえお順テーブルはこの中に動的に生成されます -->
+        </div>
+        
+        <div id="checked-list-container">
+            <h3>✅ チェックした国リスト</h3>
+            <div id="checked-list">ここにチェックした国名が表示されます。</div>
+        </div>
+
+    </div>
+
+    <button id="scrollTopBtn" title="トップへ戻る">↑</button>
+
+    <footer>
+        © 底原永和
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 国データ (挨拶情報を現地語表記＋カタカナ読みに更新)
+            const countries = [
+                // アジア・オセアニア (region: 0)
+                {name:"アフガニスタン", furigana:"あふがにすたん", capital:"カブール", pop:"約4,337万人", hello:"سلام (サラーム)", currency:"アフガニ (AFN)", famous:["絨毯","ラピスラズリ","バーミヤン遺跡"], flag:"🇦🇫", region:0},
+                {name:"オーストラリア", furigana:"おーすとらりあ", capital:"キャンベラ", pop:"約2,670万人", hello:"G'day (グッダイ)", currency:"豪ドル (AUD)", famous:["オペラハウス","ウルル","コアラ、カンガルー"], flag:"🇦🇺", region:0},
+                {name:"アゼルバイジャン", furigana:"あぜるばいじゃん", capital:"バクー", pop:"約1,046万人", hello:"Salam (サラーム)", currency:"マナト (AZN)", famous:["石油","炎の山（ヤナルダグ）","旧市街（世界遺産）"], flag:"🇦🇿", region:0},
+                {name:"バーレーン", furigana:"ばーれーん", capital:"マナーマ", pop:"約150万人", hello:"مرحبا (マルハバン)", currency:"バーレーン・ディナール (BHD)", famous:["真珠","F1バーレーンGP","生命の木"], flag:"🇧🇭", region:0},
+                {name:"バングラデシュ", furigana:"ばんぐらでしゅ", capital:"ダッカ", pop:"約1.7億人", hello:"নমস্কার (ノモシュカル)", currency:"タカ (BDT)", famous:["ジュート製品","ロイヤルベンガルタイガー","リキシャ"], flag:"🇧🇩", region:0},
+                {name:"ブータン", furigana:"ぶーたん", capital:"ティンプー", pop:"約78万人", hello:"Kuzuzangpo la (クズザンポーラ)", currency:"ニュルタム (BTN)", famous:["国民総幸福量(GNH)","タクツァン僧院","唐辛子料理"], flag:"🇧🇹", region:0},
+                {name:"ブルネイ", furigana:"ぶるねい", capital:"バンダルスリブガワン", pop:"約45万人", hello:"Selamat Pagi (スラマッ・パギ)", currency:"ブルネイ・ドル (BND)", famous:["石油・天然ガス","スルタン・オマール・アリ・サイフディン・モスク"], flag:"🇧🇳", region:0},
+                {name:"カンボジア", furigana:"かんぼじあ", capital:"プノンペン", pop:"約1,712万人", hello:"ជំរាបសួរ (チョムリアップ・スオ)", currency:"リエル (KHR)", famous:["アンコール・ワット","キリング・フィールド","クメール料理"], flag:"🇰🇭", region:0},
+                {name:"中国", furigana:"ちゅうごく", capital:"北京", pop:"約14.2億人", hello:"你好 (ニーハオ)", currency:"人民元 (CNY)", famous:["万里の長城","パンダ","中華料理"], flag:"🇨🇳", region:0},
+                {name:"クック諸島", furigana:"くっくしょとう", capital:"アバルア", pop:"約1.7万人", hello:"Kia Orana (キア・オラナ)", currency:"NZドル (NZD)", famous:["黒真珠","美しいラグーン","伝統舞踊"], flag:"🇨🇰", region:0},
+                {name:"フィジー", furigana:"ふぃじー", capital:"スバ", pop:"約94万人", hello:"Bula (ブラ)", currency:"フィジー・ドル (FJD)", famous:["ラグビー","美しい海","フィジーウォーター"], flag:"🇫🇯", region:0},
+                {name:"インド", furigana:"いんど", capital:"ニューデリー", pop:"約14.4億人", hello:"नमस्ते (ナマステ)", currency:"インド・ルピー (INR)", famous:["タージ・マハル","カレー","ボリウッド映画"], flag:"🇮🇳", region:0},
+                {name:"インドネシア", furigana:"いんどねしあ", capital:"ジャカルタ", pop:"約2.7億人", hello:"Selamat siang (スラマッ・シアン)", currency:"ルピア (IDR)", famous:["バリ島","ボロブドゥール遺跡","コモドドラゴン"], flag:"🇮🇩", region:0},
+                {name:"イラン", furigana:"いらん", capital:"テヘラン", pop:"約8,981万人", hello:"سلام (サラーム)", currency:"イラン・リヤル (IRR)", famous:["ペルシャ絨毯","ペルセポリス"], flag:"🇮🇷", region:0},
+                {name:"日本", furigana:"にほん", capital:"東京", pop:"約1.2億人", hello:"こんにちは (こんにちは)", currency:"円 (JPY)", famous:["富士山","寿司","アニメ"], flag:"🇯🇵", region:0},
+                {name:"ヨルダン", furigana:"よるだん", capital:"アンマン", pop:"約1,152万人", hello:"مرحبا (マルハバン)", currency:"ヨルダン・ディナール (JOD)", famous:["ペトラ遺跡","死海"], flag:"🇯🇴", region:0},
+                {name:"カザフスタン", furigana:"かざふすたん", capital:"アスタナ", pop:"約2,000万人", hello:"Сәлем (サレム)", currency:"テンゲ (KZT)", famous:["宇宙基地バイコヌール","広大な草原"], flag:"🇰🇿", region:0},
+                {name:"キリバス", furigana:"きりばす", capital:"タラワ", pop:"約13万人", hello:"Mauri (マウリ)", currency:"豪ドル (AUD)", famous:["環礁","気候変動の影響"], flag:"🇰🇮", region:0},
+                {name:"大韓民国", furigana:"だいかんみんこく", capital:"ソウル", pop:"約5,170万人", hello:"안녕하세요 (アンニョンハセヨ)", currency:"ウォン (KRW)", famous:["K-POP","キムチ","サムスン電子"], flag:"🇰🇷", region:0},
+                {name:"クウェート", furigana:"くうぇーと", capital:"クウェートシティ", pop:"約435万人", hello:"مرحبا (マルハバン)", currency:"クウェート・ディナール (KWD)", famous:["石油","クウェート・タワー"], flag:"🇰🇼", region:0},
+                {name:"キルギス", furigana:"きるぎす", capital:"ビシュケク", pop:"約720万人", hello:"Салам (サラム)", currency:"ソム (KGS)", famous:["イシク・クル湖","天山山脈"], flag:"🇰🇬", region:0},
+                {name:"ラオス", furigana:"らおす", capital:"ビエンチャン", pop:"約775万人", hello:"ສະບາຍດີ (サバイディー)", currency:"キープ (LAK)", famous:["ルアンパバーグ","メコン川"], flag:"🇱🇦", region:0},
+                {name:"マレーシア", furigana:"まれーしあ", capital:"クアラルンプール", pop:"約3,430万人", hello:"Selamat Pagi (スラマッ・パギ)", currency:"リンギット (MYR)", famous:["ペトロナスツインタワー","多文化社会"], flag:"🇲🇾", region:0},
+                {name:"モルディブ", furigana:"もるでぃぶ", capital:"マレ", pop:"約52万人", hello:"އައްސަލާމް ޢަލައިކުމް (アッサラーム・アライクム)", currency:"ルフィヤ (MVR)", famous:["水上コテージ","サンゴ礁"], flag:"🇲🇻", region:0},
+                {name:"マーシャル諸島", furigana:"まーしゃるしょとう", capital:"マジュロ", pop:"約4万人", hello:"Iakwe (ヤックェ)", currency:"米ドル (USD)", famous:["ビキニ環礁","美しい海"], flag:"🇲🇭", region:0},
+                {name:"ミクロネシア連邦", furigana:"みくろねしあれんぽう", capital:"パリキール", pop:"約10万人", hello:"Kaselehlie (カセレリア)", currency:"米ドル (USD)", famous:["チューク環礁","ナン・マドール遺跡"], flag:"🇫🇲", region:0},
+                {name:"モンゴル", furigana:"もんごる", capital:"ウランバートル", pop:"約350万人", hello:"Сайн байна уу (サイン・バイノー)", currency:"トゥグルグ (MNT)", famous:["チンギス・カン","ゲル","ゴビ砂漠"], flag:"🇲🇳", region:0},
+                {name:"ミャンマー", furigana:"みゃんまー", capital:"ネピドー", pop:"約5,496万人", hello:"မင်္ဂလာပါ (ミンガラーバー)", currency:"チャット (MMK)", famous:["シュエダゴン・パゴダ","バガン遺跡"], flag:"🇲🇲", region:0},
+                {name:"ナウル", furigana:"なうる", capital:"ヤレン", pop:"約1.2万人", hello:"Hello (ハロー)", currency:"豪ドル (AUD)", famous:["リン鉱石","世界で3番目に小さい国"], flag:"🇳🇷", region:0},
+                {name:"ネパール", furigana:"ねぱーる", capital:"カトマンズ", pop:"約3,124万人", hello:"नमस्ते (ナマステ)", currency:"ネパール・ルピー (NPR)", famous:["ヒマラヤ山脈","ルンビニ"], flag:"🇳🇵", region:0},
+                {name:"ニュージーランド", furigana:"にゅーじーらんど", capital:"ウェリントン", pop:"約527万人", hello:"Kia Ora (キア・オラ)", currency:"NZドル (NZD)", famous:["マオリ文化","ラグビー","映画撮影地"], flag:"🇳🇿", region:0},
+                {name:"オマーン", furigana:"おまーん", capital:"マスカット", pop:"約472万人", hello:"مرحبا (マルハバン)", currency:"オマーン・リアル (OMR)", famous:["スルタン・カブース・グランドモスク","乳香"], flag:"🇴🇲", region:0},
+                {name:"パキスタン", furigana:"ぱきすたん", capital:"イスラマバード", pop:"約2.4億人", hello:"السلام عليكم (アッサラーム・アライクム)", currency:"パキスタン・ルピー (PKR)", famous:["モヘンジョダロ遺跡","K2"], flag:"🇵🇰", region:0},
+                {name:"パラオ", furigana:"ぱらお", capital:"ンゲルルムッド", pop:"約1.8万人", hello:"Alii (アリー)", currency:"米ドル (USD)", famous:["ロックアイランド","ジェリーフィッシュレイク"], flag:"🇵🇼", region:0},
+                {name:"パプアニューギニア", furigana:"ぱぷあにゅーぎにあ", capital:"ポートモレスビー", pop:"約1,051万人", hello:"Moning (モーニン)", currency:"キナ (PGK)", famous:["多様な部族文化","極楽鳥"], flag:"🇵🇬", region:0},
+                {name:"フィリピン", furigana:"ふぃりぴん", capital:"マニラ", pop:"約1.1億人", hello:"Kumusta (クムスタ)", currency:"フィリピン・ペソ (PHP)", famous:["セブ島","棚田"], flag:"🇵🇭", region:0},
+                {name:"カタール", furigana:"かたーる", capital:"ドーハ", pop:"約274万人", hello:"مرحبا (マルハバン)", currency:"カタール・リヤル (QAR)", famous:["天然ガス","アルジャジーラ","イスラム美術館"], flag:"🇶🇦", region:0},
+                {name:"サウジアラビア", furigana:"さうじあらびあ", capital:"リヤド", pop:"約3,747万人", hello:"السلام عليكم (アッサラーム・アライクム)", currency:"サウジ・リヤル (SAR)", famous:["メッカ","石油","アル・ウラ"], flag:"🇸🇦", region:0},
+                {name:"シンガポール", furigana:"しんがぽーる", capital:"シンガポール", pop:"約605万人", hello:"Hello (ハロー)", currency:"シンガポール・ドル (SGD)", famous:["マーライオン","マリーナベイ・サンズ"], flag:"🇸🇬", region:0},
+                {name:"ソロモン諸島", furigana:"そろもんしょとう", capital:"ホニアラ", pop:"約75万人", hello:"Halo (ハロー)", currency:"ソロモン諸島ドル (SBD)", famous:["ガダルカナル島","豊かな海洋資源"], flag:"🇸🇧", region:0},
+                {name:"スリランカ", furigana:"すりらんか", capital:"スリジャヤワルダナプラコッテ", pop:"約2,195万人", hello:"ආයුබෝවන් (アーユーボーワン)", currency:"スリランカ・ルピー (LKR)", famous:["紅茶","シーギリヤロック"], flag:"🇱🇰", region:0},
+                {name:"シリア", furigana:"しりあ", capital:"ダマスカス", pop:"約2,434万人", hello:"مرحبا (マルハバン)", currency:"シリア・ポンド (SYP)", famous:["ダマスカス旧市街","パルミラ遺跡"], flag:"🇸🇾", region:0},
+                {name:"台湾", furigana:"たいわん", capital:"台北", pop:"約2,390万人", hello:"你好 (ニーハオ)", currency:"ニュー台湾ドル (TWD)", famous:["台北101","小籠包","夜市"], flag:"🇹🇼", region:0},
+                {name:"タジキスタン", furigana:"たじきすたん", capital:"ドゥシャンベ", pop:"約1,033万人", hello:"Салом (サローム)", currency:"ソモニ (TJS)", famous:["パミール高原","ワハーン回廊"], flag:"🇹🇯", region:0},
+                {name:"タイ", furigana:"たい", capital:"バンコク", pop:"約7,180万人", hello:"สวัสดี (サワッディー)", currency:"バーツ (THB)", famous:["トムヤムクン","仏教寺院","象"], flag:"🇹🇭", region:0},
+                {name:"東ティモール", furigana:"ひがしてぃもーる", capital:"ディリ", pop:"約138万人", hello:"Bondia (ボンディア)", currency:"米ドル (USD)", famous:["コーヒー","独立の歴史"], flag:"🇹🇱", region:0},
+                {name:"トンガ", furigana:"とんが", capital:"ヌクアロファ", pop:"約10万人", hello:"Mālō e lelei (マロ・エ・レレイ)", currency:"パアンガ (TOP)", famous:["ラグビー","ザトウクジラ"], flag:"🇹🇴", region:0},
+                {name:"トルクメニスタン", furigana:"とるくめにすたん", capital:"アシガバート", pop:"約659万人", hello:"Salam (サラーム)", currency:"マナト (TMT)", famous:["地獄の門","アハルテケ馬"], flag:"🇹🇲", region:0},
+                {name:"ツバル", furigana:"つばる", capital:"フナフティ", pop:"約1.1万人", hello:"Talofa (タロファ)", currency:"豪ドル (AUD)", famous:["海面上昇問題",".tvドメイン"], flag:"🇹🇻", region:0},
+                {name:"アラブ首長国連邦", furigana:"あらぶしゅちょうこくれんぽう", capital:"アブダビ", pop:"約959万人", hello:"مرحبا (マルハバン)", currency:"UAEディルハム (AED)", famous:["ブルジュ・ハリファ","ドバイ・モール"], flag:"🇦🇪", region:0},
+                {name:"ウズベキスタン", furigana:"うずべきすたん", capital:"タシケント", pop:"約3,730万人", hello:"Assalomu alaykum (アッサローム・アライクム)", currency:"スム (UZS)", famous:["サマルカンド","シルクロード"], flag:"🇺🇿", region:0},
+                {name:"バヌアツ", furigana:"ばぬあつ", capital:"ポートビラ", pop:"約34万人", hello:"Halo (ハロー)", currency:"バツ (VUV)", famous:["バンジージャンプ発祥の地","ヤスール火山"], flag:"🇻🇺", region:0},
+                {name:"ベトナム", furigana:"べとなむ", capital:"ハノイ", pop:"約9,949万人", hello:"Xin chào (シンチャオ)", currency:"ドン (VND)", famous:["フォー","ハロン湾","アオザイ"], flag:"🇻🇳", region:0},
+                {name:"イエメン", furigana:"いえめん", capital:"サナア", pop:"約3,522万人", hello:"مرحبا (マルハバン)", currency:"イエメン・リアル (YER)", famous:["サナア旧市街","ソコトラ島"], flag:"🇾🇪", region:0},
+                // アメリカ大陸 (region: 1)
+                {name:"アンティグア・バーブーダ", furigana:"あんてぃぐあばーぶーだ", capital:"セントジョンズ", pop:"約9.5万人", hello:"Hello (ハロー)", currency:"東カリブ・ドル (XCD)", famous:["365のビーチ","ネルソンズ・ドックヤード"], flag:"🇦🇬", region:1},
+                {name:"アルゼンチン", furigana:"あるぜんちん", capital:"ブエノスアイレス", pop:"約4,605万人", hello:"Hola (オラ)", currency:"アルゼンチン・ペソ (ARS)", famous:["タンゴ","サッカー","パタゴニア"], flag:"🇦🇷", region:1},
+                {name:"バルバドス", furigana:"ばるばどす", capital:"ブリッジタウン", pop:"約28万人", hello:"Hello (ハロー)", currency:"バルバドス・ドル (BBD)", famous:["リアーナ","ラム酒"], flag:"🇧🇧", region:1},
+                {name:"ベリーズ", furigana:"べりーず", capital:"ベルモパン", pop:"約41万人", hello:"Hello (ハロー)", currency:"ベリーズ・ドル (BZD)", famous:["グレート・ブルーホール","マヤ遺跡"], flag:"🇧🇿", region:1},
+                {name:"ボリビア", furigana:"ぼりびあ", capital:"ラパス", pop:"約1,257万人", hello:"Hola (オラ)", currency:"ボリビアーノ (BOB)", famous:["ウユニ塩湖","チチカカ湖"], flag:"🇧🇴", region:1},
+                {name:"ブラジル", furigana:"ぶらじる", capital:"ブラジリア", pop:"約2.1億人", hello:"Olá (オラ)", currency:"レアル (BRL)", famous:["サッカー","サンバ","コーヒー"], flag:"🇧🇷", region:1},
+                {name:"カナダ", furigana:"かなだ", capital:"オタワ", pop:"約3,910万人", hello:"Hello / Bonjour (ハロー/ボンジュール)", currency:"カナダドル (CAD)", famous:["ナイアガラの滝","メープルシロップ"], flag:"🇨🇦", region:1},
+                {name:"チリ", furigana:"ちり", capital:"サンティアゴ", pop:"約1,966万人", hello:"Hola (オラ)", currency:"チリ・ペソ (CLP)", famous:["イースター島","ワイン"], flag:"🇨🇱", region:1},
+                {name:"コロンビア", furigana:"ころんびあ", capital:"ボゴタ", pop:"約5,234万人", hello:"Hola (オラ)", currency:"コロンビア・ペソ (COP)", famous:["コーヒー","エメラルド"], flag:"🇨🇴", region:1},
+                {name:"コスタリカ", furigana:"こすたりか", capital:"サンホセ", pop:"約525万人", hello:"Hola (オラ)", currency:"コロン (CRC)", famous:["エコツーリズム","豊かな自然"], flag:"🇨🇷", region:1},
+                {name:"キューバ", furigana:"きゅーば", capital:"ハバナ", pop:"約1,119万人", hello:"Hola (オラ)", currency:"キューバ・ペソ (CUP)", famous:["クラシックカー","葉巻","サルサ"], flag:"🇨🇺", region:1},
+                {name:"ドミニカ国", furigana:"どみにかこく", capital:"ロゾー", pop:"約7.3万人", hello:"Hello (ハロー)", currency:"東カリブ・ドル (XCD)", famous:["沸騰する湖","手付かずの自然"], flag:"🇩🇲", region:1},
+                {name:"ドミニカ共和国", furigana:"どみにかきょうわこく", capital:"サントドミンゴ", pop:"約1,143万人", hello:"Hola (オラ)", currency:"ドミニカ・ペソ (DOP)", famous:["野球","メレンゲ"], flag:"🇩🇴", region:1},
+                {name:"エクアドル", furigana:"えくあどる", capital:"キト", pop:"約1,833万人", hello:"Hola (オラ)", currency:"米ドル (USD)", famous:["ガラパゴス諸島","赤道"], flag:"🇪🇨", region:1},
+                {name:"エルサルバドル", furigana:"えるさるばどる", capital:"サンサルバドル", pop:"約640万人", hello:"Hola (オラ)", currency:"米ドル / ビットコイン", famous:["サーフィン","火山"], flag:"🇸🇻", region:1},
+                {name:"グレナダ", furigana:"ぐれなだ", capital:"セントジョージズ", pop:"約12.6万人", hello:"Hello (ハロー)", currency:"東カリブ・ドル (XCD)", famous:["ナツメグ","水中彫刻公園"], flag:"🇬🇩", region:1},
+                {name:"グアテマラ", furigana:"ぐあてまら", capital:"グアテマラシティ", pop:"約1,836万人", hello:"Hola (オラ)", currency:"ケツァル (GTQ)", famous:["ティカル遺跡","コーヒー"], flag:"🇬🇹", region:1},
+                {name:"ガイアナ", furigana:"がいあな", capital:"ジョージタウン", pop:"約81万人", hello:"Hello (ハロー)", currency:"ガイアナ・ドル (GYD)", famous:["カイエトゥールの滝","石油"], flag:"🇬🇾", region:1},
+                {name:"ハイチ", furigana:"はいち", capital:"ポルトープランス", pop:"約1,186万人", hello:"Bonjou (ボンジュ)", currency:"グールド (HTG)", famous:["世界初の黒人共和国","アート"], flag:"🇭🇹", region:1},
+                {name:"ホンジュラス", furigana:"ほんじゅらす", capital:"テグシガルパ", pop:"約1,076万人", hello:"Hola (オラ)", currency:"レンピラ (HNL)", famous:["コパン遺跡","コーヒー"], flag:"🇭🇳", region:1},
+                {name:"ジャマイカ", furigana:"じゃまいか", capital:"キングストン", pop:"約282万人", hello:"Wha gwaan (ワー・グワン)", currency:"ジャマイカ・ドル (JMD)", famous:["レゲエ","陸上短距離"], flag:"🇯🇲", region:1},
+                {name:"メキシコ", furigana:"めきしこ", capital:"メキシコシティ", pop:"約1.2億人", hello:"Hola (オラ)", currency:"メキシコ・ペソ (MXN)", famous:["タコス","マヤ・アステカ遺跡"], flag:"🇲🇽", region:1},
+                {name:"ニカラグア", furigana:"にからぐあ", capital:"マナグア", pop:"約714万人", hello:"Hola (オラ)", currency:"コルドバ (NIO)", famous:["火山と湖","コーヒー"], flag:"🇳🇮", region:1},
+                {name:"パナマ", furigana:"ぱなま", capital:"パナマシティ", pop:"約454万人", hello:"Hola (オラ)", currency:"バルボア/米ドル", famous:["パナマ運河","パナマ帽"], flag:"🇵🇦", region:1},
+                {name:"パラグアイ", furigana:"ぱらぐあい", capital:"アスンシオン", pop:"約694万人", hello:"Mba'éichapa (ンバイチャパ)", currency:"グアラニー (PYG)", famous:["イグアスの滝","マテ茶"], flag:"🇵🇾", region:1},
+                {name:"ペルー", furigana:"ぺるー", capital:"リマ", pop:"約3,468万人", hello:"Hola (オラ)", currency:"ソル (PEN)", famous:["マチュピチュ","ナスカの地上絵"], flag:"🇵🇪", region:1},
+                {name:"セントクリストファー・ネーヴィス", furigana:"せんとくりすとふぁーねーゔぃす", capital:"バセテール", pop:"約4.7万人", hello:"Hello (ハロー)", currency:"東カリブ・ドル (XCD)", famous:["観光列車","要塞"], flag:"🇰🇳", region:1},
+                {name:"セントルシア", furigana:"せんとるしあ", capital:"カストリーズ", pop:"約18万人", hello:"Hello (ハロー)", currency:"東カリブ・ドル (XCD)", famous:["ピトン山","チョコレート"], flag:"🇱🇨", region:1},
+                {name:"セントビンセント・グレナディーン", furigana:"せんとびんせんとぐれなでぃーん", capital:"キングスタウン", pop:"約10万人", hello:"Hello (ハロー)", currency:"東カリブ・ドル (XCD)", famous:["パイレーツ・オブ・カリビアン撮影地"], flag:"🇻🇨", region:1},
+                {name:"スリナム", furigana:"すりなむ", capital:"パラマリボ", pop:"約62万人", hello:"Goeiedag (フーイェダッハ)", currency:"スリナム・ドル (SRD)", famous:["多様な民族","熱帯雨林"], flag:"🇸🇷", region:1},
+                {name:"トリニダード・トバゴ", furigana:"とりにだーどとばご", capital:"ポートオブスペイン", pop:"約154万人", hello:"Hello (ハロー)", currency:"TTドル (TTD)", famous:["カーニバル","スティールパン"], flag:"🇹🇹", region:1},
+                {name:"アメリカ合衆国", furigana:"あめりかがっしゅうこく", capital:"ワシントンD.C.", pop:"約3.4億人", hello:"Hello (ハロー)", currency:"米ドル (USD)", famous:["自由の女神","ハリウッド"], flag:"🇺🇸", region:1},
+                {name:"ウルグアイ", furigana:"うるぐあい", capital:"モンテビデオ", pop:"約342万人", hello:"Hola (オラ)", currency:"ウルグアイ・ペソ (UYU)", famous:["サッカー","牛肉"], flag:"🇺🇾", region:1},
+                {name:"ベネズエラ", furigana:"べねずえら", capital:"カラカス", pop:"約2,900万人", hello:"Hola (オラ)", currency:"ボリバル (VES)", famous:["エンジェルフォール","石油"], flag:"🇻🇪", region:1},
+                // アフリカ (region: 2)
+                {name:"アルジェリア", furigana:"あるじぇりあ", capital:"アルジェ", pop:"約4,628万人", hello:"السلام عليكم (アッサラーム・アライクム)", currency:"DZD", famous:["サハラ砂漠","カスバ"], flag:"🇩🇿", region:2},
+                {name:"アンゴラ", furigana:"あんごら", capital:"ルアンダ", pop:"約3,780万人", hello:"Olá (オラ)", currency:"AOA", famous:["石油","キゼンバ"], flag:"🇦🇴", region:2},
+                {name:"ベナン", furigana:"べなん", capital:"ポルトノボ", pop:"約1,408万人", hello:"Bonjour (ボンジュール)", currency:"XOF", famous:["ヴードゥー教","アボメイの王宮群"], flag:"🇧🇯", region:2},
+                {name:"ボツワナ", furigana:"ぼつわな", capital:"ハボローネ", pop:"約272万人", hello:"Dumela (ドゥメラ)", currency:"BWP", famous:["ダイヤモンド","オカバンゴ・デルタ"], flag:"🇧🇼", region:2},
+                {name:"ブルキナファソ", furigana:"ぶるきなふぁそ", capital:"ワガドゥグ", pop:"約2,384万人", hello:"Bonjour (ボンジュール)", currency:"XOF", famous:["FESPACO映画祭","シアバター"], flag:"🇧🇫", region:2},
+                {name:"ブルンジ", furigana:"ぶるんじ", capital:"ギテガ", pop:"約1,359万人", hello:"Bwakeye (ブワチェーエ)", currency:"BIF", famous:["コーヒー","伝統的なドラム"], flag:"🇧🇮", region:2},
+                {name:"カメルーン", furigana:"かめるーん", capital:"ヤウンデ", pop:"約2,932万人", hello:"Bonjour / Hello (ボンジュール/ハロー)", currency:"XAF", famous:["サッカー","アフリカの縮図"], flag:"🇨🇲", region:2},
+                {name:"中央アフリカ", furigana:"ちゅうおうあふりか", capital:"バンギ", pop:"約591万人", hello:"Bonjour (ボンジュール)", currency:"XAF", famous:["ダイヤモンド","熱帯雨林"], flag:"🇨🇫", region:2},
+                {name:"チャド", furigana:"ちゃど", capital:"ンジャメナ", pop:"約1,884万人", hello:"Bonjour (ボンジュール)", currency:"XAF", famous:["チャド湖","サハラ砂漠"], flag:"🇹🇩", region:2},
+                {name:"コモロ", furigana:"こもろ", capital:"モロニ", pop:"約86万人", hello:"Bariza djioni (バリザ・ジョニ)", currency:"KMF", famous:["イランイラン","シーラカンス"], flag:"🇰🇲", region:2},
+                {name:"コンゴ共和国", furigana:"こんごきょうわこく", capital:"ブラザビル", pop:"約624万人", hello:"Bonjour (ボンジュール)", currency:"XAF", famous:["サップ(SAPEUR)","熱帯雨林"], flag:"🇨🇬", region:2},
+                {name:"コンゴ民主共和国", furigana:"こんごみんしゅきょうわこく", capital:"キンシャサ", pop:"約1.0億人", hello:"Bonjour (ボンジュール)", currency:"CDF", famous:["コバルト","ルンバ","マウンテンゴリラ"], flag:"🇨🇩", region:2},
+                {name:"コートジボワール", furigana:"こーとじぼわーる", capital:"ヤムスクロ", pop:"約2,919万人", hello:"Bonjour (ボンジュール)", currency:"XOF", famous:["カカオ","サッカー"], flag:"🇨🇮", region:2},
+                {name:"ジブチ", furigana:"じぶち", capital:"ジブチシティ", pop:"約115万人", hello:"Assalamu alaikum (アッサラーム・アライクム)", currency:"DJF", famous:["アッサル湖","各国の軍事拠点"], flag:"🇩🇯", region:2},
+                {name:"エジプト", furigana:"えじぷと", capital:"カイロ", pop:"約1.1億人", hello:"مرحبا (マルハバン)", currency:"EGP", famous:["ピラミッド","ナイル川","古代文明"], flag:"🇪🇬", region:2},
+                {name:"赤道ギニア", furigana:"せきどうぎにあ", capital:"マラボ", pop:"約174万人", hello:"Hola (オラ)", currency:"XAF", famous:["石油","スペイン語圏"], flag:"🇬🇶", region:2},
+                {name:"エスワティニ", furigana:"えすわてぃに", capital:"ムババーネ", pop:"約122万人", hello:"Sawubona (サウボナ)", currency:"SZL", famous:["ガラス工芸","ウムランガ"], flag:"🇸🇿", region:2},
+                {name:"エチオピア", furigana:"えちおぴあ", capital:"アディスアベバ", pop:"約1.3億人", hello:"ሰላም (セラム)", currency:"ETB", famous:["コーヒー発祥地","ラリベラの岩窟教会群"], flag:"🇪🇹", region:2},
+                {name:"ガボン", furigana:"がぼん", capital:"リーブルビル", pop:"約248万人", hello:"Bonjour (ボンジュール)", currency:"XAF", famous:["熱帯雨林","マンガン"], flag:"🇬🇦", region:2},
+                {name:"ガンビア", furigana:"がんびあ", capital:"バンジュール", pop:"約284万人", hello:"As-salamu alaykum (アッサラーム・アライクム)", currency:"GMD", famous:["ガンビア川","クンタ・キンテ島"], flag:"🇬🇲", region:2},
+                {name:"ガーナ", furigana:"がーな", capital:"アクラ", pop:"約3,477万人", hello:"Akwaaba (アクワーバ)", currency:"GHS", famous:["チョコレート","ケンテ織"], flag:"🇬🇭", region:2},
+                {name:"ギニア", furigana:"ぎにあ", capital:"コナクリ", pop:"約1,446万人", hello:"Bonjour (ボンジュール)", currency:"GNF", famous:["ボーキサイト","西アフリカ音楽"], flag:"🇬🇳", region:2},
+                {name:"ギニアビサウ", furigana:"ぎにあびさう", capital:"ビサウ", pop:"約219万人", hello:"Olá (オラ)", currency:"XOF", famous:["カシューナッツ","ビジャゴス諸島"], flag:"🇬🇼", region:2},
+                {name:"ケニア", furigana:"けにあ", capital:"ナイロビ", pop:"約5,620万人", hello:"Jambo (ジャンボ)", currency:"KES", famous:["サファリ","マサイ族","マラソン"], flag:"🇰🇪", region:2},
+                {name:"レソト", furigana:"れそと", capital:"マセル", pop:"約235万人", hello:"Khotso (コツォ)", currency:"LSL", famous:["天空の王国","ブランケット"], flag:"🇱🇸", region:2},
+                {name:"リベリア", furigana:"りべりあ", capital:"モンロビア", pop:"約553万人", hello:"Hello (ハロー)", currency:"LRD", famous:["アフリカ初の共和国","船籍"], flag:"🇱🇷", region:2},
+                {name:"リビア", furigana:"りびあ", capital:"トリポリ", pop:"約730万人", hello:"مرحبا (マルハバン)", currency:"LYD", famous:["レプティス・マグナ遺跡","石油"], flag:"🇱🇾", region:2},
+                {name:"マダガスカル", furigana:"まだがすかる", capital:"アンタナナリボ", pop:"約3,106万人", hello:"Salama (サラマ)", currency:"MGA", famous:["バオバブ","キツネザル"], flag:"🇲🇬", region:2},
+                {name:"マラウイ", furigana:"まらうい", capital:"リロングウェ", pop:"約2,148万人", hello:"Muli bwanji (ムリ・ブワンジ)", currency:"MWK", famous:["マラウイ湖","アフリカの温かい心"], flag:"🇲🇼", region:2},
+                {name:"マリ", furigana:"まり", capital:"バマコ", pop:"約2,401万人", hello:"Bonjour (ボンジュール)", currency:"XOF", famous:["トンブクトゥ","ジェンネの泥モスク"], flag:"🇲🇱", region:2},
+                {name:"モーリタニア", furigana:"もーりたにあ", capital:"ヌアクショット", pop:"約499万人", hello:"السلام عليكم (アッサラーム・アライクム)", currency:"MRU", famous:["鉄鉱石","シンゲッティ"], flag:"🇲🇷", region:2},
+                {name:"モーリシャス", furigana:"もーりしゃす", capital:"ポートルイス", pop:"約126万人", hello:"Bonjour (ボンジュール)", currency:"MUR", famous:["リゾート","ドードー鳥"], flag:"🇲🇺", region:2},
+                {name:"モロッコ", furigana:"もろっこ", capital:"ラバト", pop:"約3,821万人", hello:"السلام عليكم (アッサラーム・アライクム)", currency:"MAD", famous:["マラケシュ","タジン鍋","青い街シャウエン"], flag:"🇲🇦", region:2},
+                {name:"モザンビーク", furigana:"もざんびーく", capital:"マプト", pop:"約3,485万人", hello:"Olá (オラ)", currency:"MZN", famous:["美しいビーチ","シーフード"], flag:"🇲🇿", region:2},
+                {name:"ナミビア", furigana:"なみびあ", capital:"ウィントフック", pop:"約264万人", hello:"Hello (ハロー)", currency:"NAD", famous:["ナミブ砂漠","エトーシャ国立公園"], flag:"🇳🇦", region:2},
+                {name:"ニジェール", furigana:"にじぇーる", capital:"ニアメ", pop:"約2,823万人", hello:"Bonjour (ボンジュール)", currency:"XOF", famous:["ウラン","アガデス"], flag:"🇳🇪", region:2},
+                {name:"ナイジェリア", furigana:"ないじぇりあ", capital:"アブジャ", pop:"約2.2億人", hello:"Hello (ハロー)", currency:"NGN", famous:["石油","アフロビーツ","ノリウッド"], flag:"🇳🇬", region:2},
+                {name:"ルワンダ", furigana:"るわんだ", capital:"キガリ", pop:"約1,400万人", hello:"Muraho (ムラホ)", currency:"RWF", famous:["マウンテンゴリラ","千の丘の国"], flag:"🇷🇼", region:2},
+                {name:"サントメ・プリンシペ", furigana:"さんとめぷりんしぺ", capital:"サントメ", pop:"約23万人", hello:"Olá (オラ)", currency:"STN", famous:["カカオ","アフリカのガラパゴス"], flag:"🇸🇹", region:2},
+                {name:"セネガル", furigana:"せねがる", capital:"ダカール", pop:"約1,819万人", hello:"Bonjour (ボンジュール)", currency:"XOF", famous:["ゴレ島","セネガル相撲"], flag:"🇸🇳", region:2},
+                {name:"セーシェル", furigana:"せーしぇる", capital:"ビクトリア", pop:"約10万人", hello:"Bonzour (ボンズール)", currency:"SCR", famous:["美しいビーチ","アルダブラ環礁"], flag:"🇸🇨", region:2},
+                {name:"シエラレオネ", furigana:"しえられおね", capital:"フリータウン", pop:"約897万人", hello:"Hello (ハロー)", currency:"SLL", famous:["ダイヤモンド","フリータウンの歴史"], flag:"🇸🇱", region:2},
+                {name:"ソマリア", furigana:"そまりあ", capital:"モガディシュ", pop:"約1,870万人", hello:"See tahay (セー・タヘイ)", currency:"SOS", famous:["長い海岸線","乳香"], flag:"🇸🇴", region:2},
+                {name:"南アフリカ", furigana:"みなみあふりか", capital:"プレトリア他", pop:"約6,102万人", hello:"Hello (ハロー)", currency:"ZAR", famous:["ネルソン・マンデラ","クルーガー国立公園"], flag:"🇿🇦", region:2},
+                {name:"南スーダン", furigana:"みなみすーだん", capital:"ジュバ", pop:"約1,127万人", hello:"Hello (ハロー)", currency:"SSP", famous:["石油","最も新しい国の一つ"], flag:"🇸🇸", region:2},
+                {name:"スーダン", furigana:"すーだん", capital:"ハルツーム", pop:"約4,936万人", hello:"السلام عليكم (アッサラーム・アライクム)", currency:"SDG", famous:["メロエのピラミッド","ナイル川"], flag:"🇸🇩", region:2},
+                {name:"タンザニア", furigana:"たんざにあ", capital:"ドドマ", pop:"約6,901万人", hello:"Jambo (ジャンボ)", currency:"TZS", famous:["キリマンジャロ","セレンゲティ","ザンジバル"], flag:"🇹🇿", region:2},
+                {name:"トーゴ", furigana:"とーご", capital:"ロメ", pop:"約926万人", hello:"Bonjour (ボンジュール)", currency:"XOF", famous:["リン鉱石","ロメの市場"], flag:"🇹🇬", region:2},
+                {name:"チュニジア", furigana:"ちゅにじあ", capital:"チュニス", pop:"約1,257万人", hello:"السلام عليكم (アッサラーム・アライクム)", currency:"TND", famous:["カルタゴ遺跡","シディ・ブ・サイド"], flag:"🇹🇳", region:2},
+                {name:"ウガンダ", furigana:"うがんだ", capital:"カンパラ", pop:"約4,992万人", hello:"Hello (ハロー)", currency:"UGX", famous:["ナイル川源流","マウンテンゴリラ"], flag:"🇺🇬", region:2},
+                {name:"ザンビア", furigana:"ざんびあ", capital:"ルサカ", pop:"約2,114万人", hello:"Hello (ハロー)", currency:"ZMW", famous:["ビクトリアの滝","銅"], flag:"🇿🇲", region:2},
+                {name:"ジンバブエ", furigana:"じんばぶえ", capital:"ハラレ", pop:"約1,702万人", hello:"Hello (ハロー)", currency:"ZWL / USD", famous:["ビクトリアの滝","グレート・ジンバブエ遺跡"], flag:"🇿🇼", region:2},
+                // ヨーロッパ (region: 3)
+                {name:"アルバニア", furigana:"あるばにあ", capital:"ティラナ", pop:"約283万人", hello:"Përshëndetje (プルシェンデティエ)", currency:"ALL", famous:["歴史的要塞","美しい海岸線"], flag:"🇦🇱", region:3},
+                {name:"アルメニア", furigana:"あるめにあ", capital:"エレバン", pop:"約278万人", hello:"Բարև (バレヴ)", currency:"AMD", famous:["アララト山","世界最古のキリスト教国"], flag:"🇦🇲", region:3},
+                {name:"オーストリア", furigana:"おーすとりあ", capital:"ウィーン", pop:"約900万人", hello:"Guten Tag (グーテン・ターク)", currency:"EUR", famous:["クラシック音楽","アルプス"], flag:"🇦🇹", region:3},
+                {name:"ベルギー", furigana:"べるぎー", capital:"ブリュッセル", pop:"約1,170万人", hello:"Hallo / Bonjour (ハロー/ボンジュール)", currency:"EUR", famous:["チョコレート","ワッフル","ビール"], flag:"🇧🇪", region:3},
+                {name:"ボスニア・ヘルツェゴビナ", furigana:"ぼすにあへるつぇごびな", capital:"サラエボ", pop:"約321万人", hello:"Dobar dan (ドバル・ダン)", currency:"BAM", famous:["スタリ・モスト","サラエボ事件"], flag:"🇧🇦", region:3},
+                {name:"ブルガリア", furigana:"ぶるがりあ", capital:"ソフィア", pop:"約640万人", hello:"Здравейте (ズドラヴェイテ)", currency:"BGN", famous:["ヨーグルト","バラの谷"], flag:"🇧🇬", region:3},
+                {name:"クロアチア", furigana:"くろあちあ", capital:"ザグレブ", pop:"約385万人", hello:"Dobar dan (ドバル・ダン)", currency:"EUR", famous:["ドゥブロヴニク","プリトヴィツェ湖群"], flag:"🇭🇷", region:3},
+                {name:"チェコ", furigana:"ちぇこ", capital:"プラハ", pop:"約1,050万人", hello:"Dobrý den (ドブリー・デン)", currency:"CZK", famous:["プラハ城","ビール"], flag:"🇨🇿", region:3},
+                {name:"デンマーク", furigana:"でんまーく", capital:"コペンハーゲン", pop:"約590万人", hello:"Hej (ハイ)", currency:"DKK", famous:["人魚姫の像","レゴ"], flag:"🇩🇰", region:3},
+                {name:"エストニア", furigana:"えすとにあ", capital:"タリン", pop:"約132万人", hello:"Tere (テレ)", currency:"EUR", famous:["電子国家","タリン歴史地区"], flag:"🇪🇪", region:3},
+                {name:"フィンランド", furigana:"ふぃんらんど", capital:"ヘルシンキ", pop:"約555万人", hello:"Hei (ヘイ)", currency:"EUR", famous:["サウナ","サンタクロース","ムーミン"], flag:"🇫🇮", region:3},
+                {name:"フランス", furigana:"ふらんす", capital:"パリ", pop:"約6,488万人", hello:"Bonjour (ボンジュール)", currency:"EUR", famous:["エッフェル塔","ルーヴル美術館","美食"], flag:"🇫🇷", region:3},
+                {name:"ジョージア", furigana:"じょーじあ", capital:"トビリシ", pop:"約370万人", hello:"გამარჯობა (ガマルジョバ)", currency:"GEL", famous:["ワイン発祥の地","シュクメルリ"], flag:"🇬🇪", region:3},
+                {name:"ドイツ", furigana:"どいつ", capital:"ベルリン", pop:"約8,470万人", hello:"Guten Tag (グーテン・ターク)", currency:"EUR", famous:["ビール","ソーセージ","自動車"], flag:"🇩🇪", region:3},
+                {name:"ギリシャ", furigana:"ぎりしゃ", capital:"アテネ", pop:"約1,030万人", hello:"Γειά σας (ヤーサス)", currency:"EUR", famous:["パルテノン神殿","サントリーニ島"], flag:"🇬🇷", region:3},
+                {name:"ハンガリー", furigana:"はんがりー", capital:"ブダペスト", pop:"約950万人", hello:"Jó napot (ヨー・ナポト)", currency:"HUF", famous:["温泉","ブダペストの夜景"], flag:"🇭🇺", region:3},
+                {name:"アイスランド", furigana:"あいすらんんど", capital:"レイキャビク", pop:"約37.5万人", hello:"Halló (ハッロー)", currency:"ISK", famous:["オーロラ","火山","ブルーラグーン"], flag:"🇮🇸", region:3},
+                {name:"アイルランド", furigana:"あいるらんど", capital:"ダブリン", pop:"約506万人", hello:"Hello (ハロー)", currency:"EUR", famous:["ギネスビール","ケルト文化"], flag:"🇮🇪", region:3},
+                {name:"イタリア", furigana:"いたりあ", capital:"ローマ", pop:"約5,870万人", hello:"Buongiorno (ボンジョルノ)", currency:"EUR", famous:["コロッセオ","ピザ、パスタ","ファッション"], flag:"🇮🇹", region:3},
+                {name:"コソボ", furigana:"こそぼ", capital:"プリシュティナ", pop:"約176万人", hello:"Përshëndetje (プルシェンデティエ)", currency:"EUR", famous:["Newborn Monument","プリズレン"], flag:"🇽🇰", region:3},
+                {name:"ラトビア", furigana:"らとびあ", capital:"リガ", pop:"約180万人", hello:"Sveiki (スヴェイキ)", currency:"EUR", famous:["リガ歴史地区","アール・ヌーヴォー建築"], flag:"🇱🇻", region:3},
+                {name:"リトアニア", furigana:"りとあにあ", capital:"ビリニュス", pop:"約270万人", hello:"Laba diena (ラバ・ディエナ)", currency:"EUR", famous:["杉原千畝","十字架の丘"], flag:"🇱🇹", region:3},
+                {name:"ルクセンブルク", furigana:"るくせんぶるく", capital:"ルクセンブルク", pop:"約65万人", hello:"Moien (モイエン)", currency:"EUR", famous:["金融センター","世界遺産の市街"], flag:"🇱🇺", region:3},
+                {name:"マルタ", furigana:"まるた", capital:"バレッタ", pop:"約53.5万人", hello:"Bonġu (ボンジュ)", currency:"EUR", famous:["マルタ騎士団","バレッタ市街"], flag:"🇲🇹", region:3},
+                {name:"モルドバ", furigana:"もるどば", capital:"キシナウ", pop:"約250万人", hello:"Bună ziua (ブナ・ズィワ)", currency:"MDL", famous:["ワイン","クリコバの地下ワイナリー"], flag:"🇲🇩", region:3},
+                {name:"モナコ", furigana:"もなこ", capital:"モナコ", pop:"約3.6万人", hello:"Bonjour (ボンジュール)", currency:"EUR", famous:["F1モナコGP","カジノ"], flag:"🇲🇨", region:3},
+                {name:"モンテネグロ", furigana:"もんてねぐろ", capital:"ポドゴリツァ", pop:"約62万人", hello:"Zdravo (ズドラヴォ)", currency:"EUR", famous:["コトル湾","ドゥルミトル国立公園"], flag:"🇲🇪", region:3},
+                {name:"オランダ", furigana:"おらんだ", capital:"アムステルダム", pop:"約1,764万人", hello:"Hallo (ハロー)", currency:"EUR", famous:["風車","チューリップ","運河"], flag:"🇳🇱", region:3},
+                {name:"北マケドニア", furigana:"きたまけどにあ", capital:"スコピエ", pop:"約206万人", hello:"Здраво (ズドラヴォ)", currency:"MKD", famous:["マザー・テレサ","オフリド湖"], flag:"🇲🇰", region:3},
+                {name:"ノルウェー", furigana:"のるうぇー", capital:"オスロ", pop:"約547万人", hello:"Hei (ハイ)", currency:"NOK", famous:["フィヨルド","オーロラ","ムンク『叫び』"], flag:"🇳🇴", region:3},
+                {name:"ポーランド", furigana:"ぽーらんど", capital:"ワルシャワ", pop:"約3,750万人", hello:"Dzień dobry (ジェン・ドブリ)", currency:"PLN", famous:["ショパン","アウシュヴィッツ"], flag:"🇵🇱", region:3},
+                {name:"ポルトガル", furigana:"ぽるとがる", capital:"リスボン", pop:"約1,020万人", hello:"Olá (オラ)", currency:"EUR", famous:["エッグタルト","ファド","大航海時代"], flag:"🇵🇹", region:3},
+                {name:"ルーマニア", furigana:"るーまにあ", capital:"ブカレスト", pop:"約1,880万人", hello:"Bună ziua (ブナ・ズィワ)", currency:"RON", famous:["ドラキュラ城","美しい修道院群"], flag:"🇷🇴", region:3},
+                {name:"ロシア", furigana:"ろしあ", capital:"モスクワ", pop:"約1.4億人", hello:"Здравствуйте (ズドラーストヴィチェ)", currency:"RUB", famous:["赤の広場","エルミタージュ美術館"], flag:"🇷🇺", region:3},
+                {name:"サンマリノ", furigana:"さんまりの", capital:"サンマリノ市", pop:"約3.3万人", hello:"Buongiorno (ボンジョルノ)", currency:"EUR", famous:["世界最古の共和国","山頂の城塞"], flag:"🇸🇲", region:3},
+                {name:"セルビア", furigana:"せるびあ", capital:"ベオグラード", pop:"約660万人", hello:"Здраво (ズドラヴォ)", currency:"RSD", famous:["ニコラ・テスラ","ベオグラード要塞"], flag:"🇷🇸", region:3},
+                {name:"スロバキア", furigana:"すろばきあ", capital:"ブラチスラバ", pop:"約540万人", hello:"Dobrý deň (ドブリー・デン)", currency:"EUR", famous:["スピシュ城","タトラ山脈"], flag:"🇸🇰", region:3},
+                {name:"スロベニア", furigana:"すろべにあ", capital:"リュブリャナ", pop:"約211万人", hello:"Dober dan (ドーベル・ダン)", currency:"EUR", famous:["ブレッド湖","ポストイナ鍾乳洞"], flag:"🇸🇮", region:3},
+                {name:"スペイン", furigana:"すぺいん", capital:"マドリード", pop:"約4,750万人", hello:"Hola (オラ)", currency:"EUR", famous:["サグラダ・ファミリア","フラメンコ","パエリア"], flag:"🇪🇸", region:3},
+                {name:"スウェーデン", furigana:"すうぇーでん", capital:"ストックホルム", pop:"約1,050万人", hello:"Hej (ヘイ)", currency:"SEK", famous:["ノーベル賞","IKEA","フィーカ"], flag:"🇸🇪", region:3},
+                {name:"スイス", furigana:"すいす", capital:"ベルン", pop:"約885万人", hello:"Grüezi / Bonjour (グリュエツィ/ボンジュール)", currency:"CHF", famous:["アルプス","時計","チョコレート"], flag:"🇨🇭", region:3},
+                {name:"トルコ", furigana:"とるこ", capital:"アンカラ", pop:"約8,626万人", hello:"Merhaba (メルハバ)", currency:"TRY", famous:["カッパドキア","イスタンブール","ケバブ"], flag:"🇹🇷", region:3},
+                {name:"ウクライナ", furigana:"うくらいな", capital:"キーウ", pop:"約3,800万人", hello:"Привіт (プリビット)", currency:"UAH", famous:["ボルシチ","聖ソフィア大聖堂"], flag:"🇺🇦", region:3},
+                {name:"イギリス", furigana:"いぎりす", capital:"ロンドン", pop:"約6,796万人", hello:"Hello (ハロー)", currency:"GBP", famous:["ビッグ・ベン","紅茶","ビートルズ"], flag:"🇬🇧", region:3},
+                {name:"バチカン", furigana:"ばちかん", capital:"バチカン市国", pop:"約800人", hello:"Salve (サルヴェ)", currency:"EUR", famous:["サン・ピエトロ大聖堂","ローマ教皇"], flag:"🇻🇦", region:3},
+            ];
+
+            const regions = [
+                { name: "アジア・オセアニア", icon: "🌏" },
+                { name: "アメリカ大陸", icon: "🌎" },
+                { name: "アフリカ", icon: "🌍" },
+                { name: "ヨーロッパ", icon: "🇪🇺" },
+            ];
+
+            const regionalView = document.getElementById('regionalView');
+            const alphaView = document.getElementById('alphaView');
+            const showRegionalBtn = document.getElementById('showRegionalBtn');
+            const showAlphaBtn = document.getElementById('showAlphaBtn');
+            const searchBox = document.getElementById('searchBox');
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const counterEl = document.getElementById('counter');
+            const checkedListEl = document.getElementById('checked-list');
+            const scrollTopBtn = document.getElementById('scrollTopBtn');
+            
+            let checkedCountryNames = new Set();
+            
+            function updateUI() {
+                counterEl.textContent = `${checkedCountryNames.size} / ${countries.length}`;
+                
+                const checkedNamesArray = [...checkedCountryNames].sort((a,b) => a.localeCompare(b, 'ja-JP-u-kf-upper'));
+                checkedListEl.textContent = checkedNamesArray.length > 0 ? checkedNamesArray.join('、') : 'ここにチェックした国名が表示されます。';
+                
+                document.querySelectorAll('.country-checkbox').forEach(cb => {
+                    cb.checked = checkedCountryNames.has(cb.dataset.name);
+                });
+
+                if (checkedCountryNames.size === countries.length) {
+                    if (!sessionStorage.getItem('allCheckedAlertShown')) {
+                        alert('コンプリート！ 10000ジンバブエドルゲット！');
+                        sessionStorage.setItem('allCheckedAlertShown', 'true');
+                    }
+                } else {
+                    sessionStorage.removeItem('allCheckedAlertShown');
+                }
+            }
+
+            function createRow(country) {
+                const famousList = country.famous.map(item => `<li>${item}</li>`).join('');
+                return `
+                    <tr data-name="${country.name}" data-capital="${country.capital}" data-furigana="${country.furigana}">
+                        <td class="checkbox-cell"><input type="checkbox" class="country-checkbox" data-name="${country.name}"></td>
+                        <td><span class="flag-icon">${country.flag}</span></td>
+                        <td><a href="https://ja.wikipedia.org/wiki/${encodeURIComponent(country.name)}" target="_blank" rel="noopener noreferrer" class="country-link"><span class="country-name">${country.name}</span></a></td>
+                        <td>${country.capital}</td>
+                        <td>${country.pop}</td>
+                        <td class="hello-col">${country.hello}</td>
+                        <td>${country.currency}</td>
+                        <td><ul>${famousList}</ul></td>
+                    </tr>
+                `;
+            }
+
+            const tableHeaderHTML = `
+                <thead>
+                    <tr>
+                        <th class="checkbox-cell">✓</th><th style="width: 5%;">国旗</th><th style="width: 15%;">国・地域名</th><th style="width: 15%;">首都</th><th style="width: 10%;">人口</th><th style="width: 15%;" class="hello-col">あいさつ</th><th style="width: 15%;">通貨</th><th>有名なもの</th>
+                    </tr>
+                </thead>`;
+
+            function renderRegionalView() {
+                let html = '';
+                regions.forEach((region, index) => {
+                    html += `
+                        <h2><span class="icon">${region.icon}</span>${region.name}</h2>
+                        <table>${tableHeaderHTML}
+                            <tbody>
+                                ${countries.filter(c => c.region === index).map(createRow).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                });
+                regionalView.innerHTML = html;
+            }
+
+            function renderAlphaView() {
+                const sortedCountries = [...countries].sort((a, b) => a.furigana.localeCompare(b.furigana, 'ja'));
+                alphaView.innerHTML = `
+                    <h2><span class="icon">🔠</span>あいうえお順</h2>
+                    <table>${tableHeaderHTML}
+                        <tbody>
+                            ${sortedCountries.map(createRow).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+            
+            showRegionalBtn.addEventListener('click', () => {
+                regionalView.style.display = 'block';
+                alphaView.style.display = 'none';
+                updateUI();
+                searchBox.dispatchEvent(new Event('input')); 
+            });
+            showAlphaBtn.addEventListener('click', () => {
+                regionalView.style.display = 'none';
+                alphaView.style.display = 'block';
+                updateUI();
+                searchBox.dispatchEvent(new Event('input'));
+            });
+            
+            searchBox.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase().trim();
+                document.querySelectorAll('tbody tr').forEach(row => {
+                    const countryName = row.dataset.name.toLowerCase();
+                    const capitalName = row.dataset.capital.toLowerCase();
+                    if (countryName.includes(searchTerm) || capitalName.includes(searchTerm)) {
+                        row.classList.remove('hidden');
+                    } else {
+                        row.classList.add('hidden');
+                    }
+                });
+            });
+
+            darkModeToggle.addEventListener('change', () => {
+                document.body.classList.toggle('dark-mode');
+            });
+            
+            document.querySelector('.container').addEventListener('change', (e) => {
+                if (e.target.classList.contains('country-checkbox')) {
+                    const countryName = e.target.dataset.name;
+                    if (e.target.checked) {
+                        checkedCountryNames.add(countryName);
+                    } else {
+                        checkedCountryNames.delete(countryName);
+                    }
+                    updateUI();
+                }
+            });
+
+            window.onscroll = () => {
+                scrollTopBtn.style.display = (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) ? "block" : "none";
+            };
+            scrollTopBtn.addEventListener('click', () => {
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            });
+
+            function init() {
+                renderRegionalView();
+                renderAlphaView();
+                regionalView.style.display = 'block';
+                alphaView.style.display = 'none';
+                updateUI();
+            }
+
+            init();
+        });
+    </script>
+</body>
+</html>
