@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大阪・関西万博 参加国・地域 高機能リスト</title>
+    <title>大阪・関西万博 参加国・地域 リスト</title>
     <style>
         :root {
             --primary-bg-color: #f8f9fa;
@@ -32,6 +32,9 @@
             padding: 15px;
             transition: background-color 0.3s, color 0.3s;
         }
+        body.menu-open {
+            overflow: hidden;
+        }
 
         body.dark-mode {
             --primary-bg-color: #121212;
@@ -53,14 +56,11 @@
             to { opacity: 1; transform: translateY(0); }
         }
         @keyframes popIn {
-            0% { transform: scale(0.9); opacity: 0; }
-            80% { transform: scale(1.02); opacity: 1; }
+            0% { transform: scale(0.95); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
         @keyframes popCheck {
-            0% { transform: scale(1); }
             50% { transform: scale(1.3); }
-            100% { transform: scale(1); }
         }
 
         .container {
@@ -76,7 +76,7 @@
         h1 {
             text-align: center;
             color: var(--accent-color-1);
-            font-size: 2.5em;
+            font-size: 2.2em;
             border-bottom: 3px solid var(--accent-color-1);
             padding-bottom: 10px;
             margin-bottom: 20px;
@@ -137,7 +137,6 @@
         tr { transition: background-color 0.2s; }
         tr:nth-child(even) { background-color: var(--table-row-even-bg); }
         tr:not(.hidden):hover { background-color: var(--table-row-hover-bg); }
-        tr.hidden { display: none; }
         tbody tr { animation: popIn 0.5s ease-out; }
         
         .checkbox-cell { width: 1%; text-align: center; }
@@ -156,80 +155,146 @@
         li { margin-bottom: 5px; }
         
         #checked-list-container {
-            margin-top: 40px;
-            padding: 20px;
-            border: 1px dashed var(--border-color);
-            border-radius: 8px;
+            margin-top: 40px; padding: 20px; border: 1px dashed var(--border-color); border-radius: 8px;
         }
         #checked-list { background: var(--primary-bg-color); padding: 15px; border-radius: 5px; min-height: 50px; word-break: break-all;}
 
         #scrollTopBtn {
-            display: none;
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 99;
-            border: none;
-            outline: none;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-            padding: 15px;
-            border-radius: 50%;
-            font-size: 18px;
-            width: 50px;
-            height: 50px;
-            line-height: 18px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
+            display: none; position: fixed; bottom: 30px; right: 30px; z-index: 99; border: none; outline: none; background-color: #007bff; color: white; cursor: pointer; padding: 15px; border-radius: 50%; font-size: 18px; width: 50px; height: 50px; line-height: 18px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.2s;
         }
         #scrollTopBtn:hover { background-color: #0056b3; transform: scale(1.1); }
 
         footer { text-align: center; margin-top: 40px; padding: 20px; color: #777; border-top: 1px solid var(--border-color); }
+        
+        .menu-footer { display: none; }
+        #hamburger-toggle, .hamburger-button, .nav-menu { display: none; }
+        
+        /* --- スマホ対応 (レスポンシブデザイン) --- */
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1.5em; }
+            
+            .hamburger-button {
+                display: flex; position: fixed; top: 15px; right: 15px; z-index: 1001;
+                width: 50px; height: 50px; background: var(--secondary-bg-color); border-radius: 50%;
+                cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                flex-direction: column; justify-content: center; align-items: center; gap: 6px;
+            }
+            .hamburger-button span {
+                display: block; width: 24px; height: 3px; background-color: var(--primary-text-color);
+                border-radius: 3px; transition: all 0.3s;
+            }
+            #hamburger-toggle:checked + .hamburger-button span:nth-of-type(1) { transform: translateY(9px) rotate(45deg); }
+            #hamburger-toggle:checked + .hamburger-button span:nth-of-type(2) { opacity: 0; }
+            #hamburger-toggle:checked + .hamburger-button span:nth-of-type(3) { transform: translateY(-9px) rotate(-45deg); }
+
+            .nav-menu {
+                display: flex; flex-direction: column; position: fixed; top: 0; right: 0;
+                width: 280px; height: 100%; background-color: var(--primary-bg-color);
+                z-index: 1000; transform: translateX(100%); transition: transform 0.4s ease-in-out;
+                padding-top: 80px; box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+                box-sizing: border-box;
+            }
+            #hamburger-toggle:checked ~ .nav-menu { transform: translateX(0); }
+            
+            .nav-overlay {
+                display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.5); z-index: 999;
+            }
+            #hamburger-toggle:checked ~ .nav-overlay { display: block; }
+            
+            #pc-controls-container { display: none; }
+            
+            .nav-menu .main-controls, .nav-menu .sort-controls {
+                display: flex; flex-direction: column; align-items: stretch; gap: 20px;
+                padding: 20px; text-align: center;
+            }
+            .nav-menu .sort-button { width: 100%; box-sizing: border-box; margin: 5px 0; }
+            .nav-menu .control-group { justify-content: space-between; }
+            
+            .menu-footer {
+                display: block; text-align: center; padding: 20px; margin-top: auto; color: #777;
+            }
+            footer { display: none; }
+            
+            table { border: 0; }
+            thead { display: none; }
+            tr {
+                display: flex; flex-direction: column; margin-bottom: 20px; border-radius: 8px;
+                border: 1px solid var(--border-color); overflow: hidden;
+                box-shadow: 0 2px 5px var(--shadow-color);
+            }
+            td {
+                display: flex; justify-content: space-between; align-items: center;
+                text-align: right; border: 0; border-bottom: 1px solid var(--border-color);
+                padding: 12px 15px;
+            }
+            td:last-child { border-bottom: 0; }
+            td::before {
+                content: attr(data-label); font-weight: bold; text-align: left;
+                margin-right: 10px; color: var(--primary-text-color); opacity: 0.7;
+            }
+            
+            .checkbox-cell { order: -1; }
+            
+            td[data-label="国"] {
+                padding: 15px; flex-direction: column; background-color: var(--table-row-even-bg);
+                gap: 10px;
+            }
+            td[data-label="国"]::before { display: none; }
+            td[data-label="国"] a { font-size: 1.4em; text-align: center; }
+
+            .tr-hidden { display: none; }
+        }
     </style>
 </head>
 <body>
+    
+    <input type="checkbox" id="hamburger-toggle">
+    <label for="hamburger-toggle" class="hamburger-button">
+        <span></span><span></span><span></span>
+    </label>
+    
+    <div class="nav-menu">
+        <!-- スマホ用コントロールはJSでここに複製されます -->
+        <div class="menu-footer">© 底原永和</div>
+    </div>
+    <div class="nav-overlay"></div>
 
     <div class="container">
-        <h1>大阪・関西万博 参加国リスト</h1>
+        <h1>大阪・関西万博 参加国・地域 リスト</h1>
 
-        <div class="main-controls">
-            <input type="search" id="searchBox" class="search-box" placeholder="国名、首都名などで検索...">
-            <div class="control-group">
-                <div id="counter">0 / 160</div>
-                <span>ダークモード</span>
-                <label class="switch">
-                    <input type="checkbox" id="darkModeToggle">
-                    <span class="slider"></span>
-                </label>
+        <div id="pc-controls-container">
+            <div class="main-controls">
+                <input type="search" class="search-box" placeholder="国名、首都名などで検索...">
+                <div class="control-group">
+                    <div class="counter">0 / 160</div>
+                    <span>ダークモード</span>
+                    <label class="switch">
+                        <input type="checkbox" class="dark-mode-toggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="sort-controls">
+                <button class="sort-button" data-sort="regional">地域別に表示</button>
+                <button class="sort-button" data-sort="alpha">あいうえお順に表示</button>
             </div>
         </div>
 
-        <div class="sort-controls">
-            <button id="showRegionalBtn" class="sort-button">地域別に表示</button>
-            <button id="showAlphaBtn" class="sort-button">あいうえお順に表示</button>
-        </div>
-
-        <div id="regionalView">
-            <!-- 地域別テーブルはこの中に動的に生成されます -->
-        </div>
-
-        <div id="alphaView" style="display: none;">
-            <!-- あいうえお順テーブルはこの中に動的に生成されます -->
-        </div>
+        <div id="regionalView"></div>
+        <div id="alphaView" style="display: none;"></div>
         
         <div id="checked-list-container">
             <h3>✅ チェックした国リスト</h3>
             <div id="checked-list">ここにチェックした国名が表示されます。</div>
         </div>
-
     </div>
 
     <button id="scrollTopBtn" title="トップへ戻る">↑</button>
 
-    <footer>
-        © 底原永和
-    </footer>
+    <footer>© 底原永和</footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -426,27 +491,28 @@
                 {name:"バチカン", furigana:"ばちかん", capital:"バチカン市国", pop:"約800人", hello:"Salve (サルヴェ)", currency:"EUR", famous:["サン・ピエトロ大聖堂","ローマ教皇"], flag:"🇻🇦", region:3},
             ];
 
-            const regions = [
-                { name: "アジア・オセアニア", icon: "🌏" },
-                { name: "アメリカ大陸", icon: "🌎" },
-                { name: "アフリカ", icon: "🌍" },
-                { name: "ヨーロッパ", icon: "🇪🇺" },
-            ];
+            const regions = [ { name: "アジア・オセアニア", icon: "🌏" }, { name: "アメリカ大陸", icon: "🌎" }, { name: "アフリカ", icon: "🌍" }, { name: "ヨーロッパ", icon: "🇪🇺" }];
 
             const regionalView = document.getElementById('regionalView');
             const alphaView = document.getElementById('alphaView');
-            const showRegionalBtn = document.getElementById('showRegionalBtn');
-            const showAlphaBtn = document.getElementById('showAlphaBtn');
-            const searchBox = document.getElementById('searchBox');
-            const darkModeToggle = document.getElementById('darkModeToggle');
-            const counterEl = document.getElementById('counter');
-            const checkedListEl = document.getElementById('checked-list');
             const scrollTopBtn = document.getElementById('scrollTopBtn');
+            const hamburgerToggle = document.getElementById('hamburger-toggle');
+            const navMenu = document.querySelector('.nav-menu');
             
             let checkedCountryNames = new Set();
             
+            function cloneControls() {
+                const pcControls = document.getElementById('pc-controls-container');
+                const spControls = pcControls.cloneNode(true);
+                spControls.removeAttribute('id');
+                navMenu.prepend(spControls);
+            }
+
             function updateUI() {
-                counterEl.textContent = `${checkedCountryNames.size} / ${countries.length}`;
+                const counterEls = document.querySelectorAll('.counter');
+                const checkedListEl = document.getElementById('checked-list');
+                
+                counterEls.forEach(el => el.textContent = `${checkedCountryNames.size} / ${countries.length}`);
                 
                 const checkedNamesArray = [...checkedCountryNames].sort((a,b) => a.localeCompare(b, 'ja-JP-u-kf-upper'));
                 checkedListEl.textContent = checkedNamesArray.length > 0 ? checkedNamesArray.join('、') : 'ここにチェックした国名が表示されます。';
@@ -469,106 +535,95 @@
                 const famousList = country.famous.map(item => `<li>${item}</li>`).join('');
                 return `
                     <tr data-name="${country.name}" data-capital="${country.capital}" data-furigana="${country.furigana}">
-                        <td class="checkbox-cell"><input type="checkbox" class="country-checkbox" data-name="${country.name}"></td>
-                        <td><span class="flag-icon">${country.flag}</span></td>
-                        <td><a href="https://ja.wikipedia.org/wiki/${encodeURIComponent(country.name)}" target="_blank" rel="noopener noreferrer" class="country-link"><span class="country-name">${country.name}</span></a></td>
-                        <td>${country.capital}</td>
-                        <td>${country.pop}</td>
-                        <td class="hello-col">${country.hello}</td>
-                        <td>${country.currency}</td>
-                        <td><ul>${famousList}</ul></td>
+                        <td data-label="チェック" class="checkbox-cell"><input type="checkbox" class="country-checkbox" data-name="${country.name}"></td>
+                        <td data-label="国"><span class="flag-icon">${country.flag}</span><a href="https://ja.wikipedia.org/wiki/${encodeURIComponent(country.name)}" target="_blank" rel="noopener noreferrer" class="country-link"><span class="country-name">${country.name}</span></a></td>
+                        <td data-label="首都">${country.capital}</td>
+                        <td data-label="人口">${country.pop}</td>
+                        <td data-label="あいさつ" class="hello-col">${country.hello}</td>
+                        <td data-label="通貨">${country.currency}</td>
+                        <td data-label="有名なもの"><ul>${famousList}</ul></td>
                     </tr>
                 `;
             }
 
-            const tableHeaderHTML = `
-                <thead>
-                    <tr>
-                        <th class="checkbox-cell">✓</th><th style="width: 5%;">国旗</th><th style="width: 15%;">国・地域名</th><th style="width: 15%;">首都</th><th style="width: 10%;">人口</th><th style="width: 15%;" class="hello-col">あいさつ</th><th style="width: 15%;">通貨</th><th>有名なもの</th>
-                    </tr>
-                </thead>`;
+            const tableHeaderHTML = `<thead><tr><th class="checkbox-cell">✓</th><th colspan="2">国</th><th>首都</th><th>人口</th><th class="hello-col">あいさつ</th><th>通貨</th><th>有名なもの</th></tr></thead>`;
 
             function renderRegionalView() {
                 let html = '';
                 regions.forEach((region, index) => {
-                    html += `
-                        <h2><span class="icon">${region.icon}</span>${region.name}</h2>
-                        <table>${tableHeaderHTML}
-                            <tbody>
-                                ${countries.filter(c => c.region === index).map(createRow).join('')}
-                            </tbody>
-                        </table>
-                    `;
+                    html += `<h2><span class="icon">${region.icon}</span>${region.name}</h2>
+                             <table>${tableHeaderHTML}<tbody>
+                             ${countries.filter(c => c.region === index).map(createRow).join('')}
+                             </tbody></table>`;
                 });
                 regionalView.innerHTML = html;
             }
 
             function renderAlphaView() {
-                const sortedCountries = [...countries].sort((a, b) => a.furigana.localeCompare(b.furigana, 'ja'));
-                alphaView.innerHTML = `
-                    <h2><span class="icon">🔠</span>あいうえお順</h2>
-                    <table>${tableHeaderHTML}
-                        <tbody>
-                            ${sortedCountries.map(createRow).join('')}
-                        </tbody>
-                    </table>
-                `;
+                const sortedCountries = [...countries].sort((a, b) => a.furigana.localeCompare(b, 'ja'));
+                alphaView.innerHTML = `<h2><span class="icon">🔠</span>あいうえお順</h2>
+                                       <table>${tableHeaderHTML}<tbody>
+                                       ${sortedCountries.map(createRow).join('')}
+                                       </tbody></table>`;
             }
-            
-            showRegionalBtn.addEventListener('click', () => {
-                regionalView.style.display = 'block';
-                alphaView.style.display = 'none';
-                updateUI();
-                searchBox.dispatchEvent(new Event('input')); 
-            });
-            showAlphaBtn.addEventListener('click', () => {
-                regionalView.style.display = 'none';
-                alphaView.style.display = 'block';
-                updateUI();
-                searchBox.dispatchEvent(new Event('input'));
-            });
-            
-            searchBox.addEventListener('input', (e) => {
-                const searchTerm = e.target.value.toLowerCase().trim();
-                document.querySelectorAll('tbody tr').forEach(row => {
-                    const countryName = row.dataset.name.toLowerCase();
-                    const capitalName = row.dataset.capital.toLowerCase();
-                    if (countryName.includes(searchTerm) || capitalName.includes(searchTerm)) {
-                        row.classList.remove('hidden');
+
+            function setupEventListeners() {
+                document.querySelectorAll('.sort-button').forEach(btn => btn.addEventListener('click', (e) => {
+                    if (e.target.dataset.sort === 'regional') {
+                        regionalView.style.display = 'block';
+                        alphaView.style.display = 'none';
                     } else {
-                        row.classList.add('hidden');
+                        regionalView.style.display = 'none';
+                        alphaView.style.display = 'block';
+                    }
+                    hamburgerToggle.checked = false;
+                    document.body.classList.remove('menu-open');
+                    updateUI();
+                }));
+                
+                document.querySelectorAll('.search-box').forEach(box => box.addEventListener('input', (e) => {
+                    const searchTerm = e.target.value.toLowerCase().trim();
+                    document.querySelectorAll('.search-box').forEach(b => b.value = searchTerm); // Sync search boxes
+                    document.querySelectorAll('tbody tr').forEach(row => {
+                        const isVisible = row.dataset.name.toLowerCase().includes(searchTerm) || row.dataset.capital.toLowerCase().includes(searchTerm);
+                        row.classList.toggle('tr-hidden', !isVisible);
+                        if (window.innerWidth <= 768) row.style.display = isVisible ? 'flex' : 'none';
+                    });
+                }));
+
+                document.querySelectorAll('.dark-mode-toggle').forEach(toggle => toggle.addEventListener('change', (e) => {
+                    document.body.classList.toggle('dark-mode');
+                    document.querySelectorAll('.dark-mode-toggle').forEach(t => t.checked = e.target.checked);
+                }));
+
+                document.querySelector('.container').addEventListener('change', (e) => {
+                    if (e.target.classList.contains('country-checkbox')) {
+                        const countryName = e.target.dataset.name;
+                        if (e.target.checked) checkedCountryNames.add(countryName);
+                        else checkedCountryNames.delete(countryName);
+                        updateUI();
                     }
                 });
-            });
 
-            darkModeToggle.addEventListener('change', () => {
-                document.body.classList.toggle('dark-mode');
-            });
-            
-            document.querySelector('.container').addEventListener('change', (e) => {
-                if (e.target.classList.contains('country-checkbox')) {
-                    const countryName = e.target.dataset.name;
-                    if (e.target.checked) {
-                        checkedCountryNames.add(countryName);
-                    } else {
-                        checkedCountryNames.delete(countryName);
-                    }
-                    updateUI();
-                }
-            });
+                hamburgerToggle.addEventListener('change', () => document.body.classList.toggle('menu-open', hamburgerToggle.checked));
+                document.querySelector('.nav-overlay').addEventListener('click', () => {
+                    hamburgerToggle.checked = false;
+                    document.body.classList.remove('menu-open');
+                });
+            }
 
             window.onscroll = () => {
                 scrollTopBtn.style.display = (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) ? "block" : "none";
             };
-            scrollTopBtn.addEventListener('click', () => {
-                window.scrollTo({top: 0, behavior: 'smooth'});
-            });
+            scrollTopBtn.addEventListener('click', () => window.scrollTo({top: 0, behavior: 'smooth'}));
 
             function init() {
+                cloneControls();
                 renderRegionalView();
                 renderAlphaView();
                 regionalView.style.display = 'block';
                 alphaView.style.display = 'none';
+                setupEventListeners();
                 updateUI();
             }
 
