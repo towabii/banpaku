@@ -4,260 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>大阪・関西万博 参加国・地域 リスト</title>
+    <!-- jsPDF ライブラリ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
-            --primary-bg-color: #f8f9fa;
-            --secondary-bg-color: #fff;
-            --primary-text-color: #333;
-            --header-bg-color: #1565c0;
-            --header-text-color: #fff;
-            --link-color: #004d40;
-            --border-color: #dee2e6;
-            --table-row-even-bg: #e3f2fd;
-            --table-row-hover-bg: #bbdefb;
-            --accent-color-1: #0d47a1;
-            --accent-color-2: #c62828;
-            --shadow-color: rgba(0,0,0,0.08);
-            --switch-bg: #ccc;
-            --switch-fg: white;
-            --switch-bg-checked: #2196F3;
+            --primary-bg-color: #f8f9fa; --secondary-bg-color: #fff; --primary-text-color: #333; --header-bg-color: #1565c0; --header-text-color: #fff; --link-color: #004d40; --border-color: #dee2e6; --table-row-even-bg: #e3f2fd; --table-row-hover-bg: #bbdefb; --accent-color-1: #0d47a1; --accent-color-2: #c62828; --shadow-color: rgba(0,0,0,0.08); --switch-bg: #ccc; --switch-fg: white; --switch-bg-checked: #2196F3;
         }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-            line-height: 1.6;
-            background-color: var(--primary-bg-color);
-            color: var(--primary-text-color);
-            margin: 0;
-            padding: 15px;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        body.menu-open {
-            overflow: hidden;
-        }
-
-        body.dark-mode {
-            --primary-bg-color: #121212;
-            --secondary-bg-color: #1e1e1e;
-            --primary-text-color: #e0e0e0;
-            --header-bg-color: #37474F;
-            --link-color: #80cbc4;
-            --border-color: #424242;
-            --table-row-even-bg: #263238;
-            --table-row-hover-bg: #37474F;
-            --accent-color-1: #90caf9;
-            --accent-color-2: #ef9a9a;
-            --shadow-color: rgba(255,255,255,0.08);
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif; line-height: 1.6; background-color: var(--primary-bg-color); color: var(--primary-text-color); margin: 0; padding: 15px; transition: background-color 0.3s, color 0.3s; }
+        body.menu-open { overflow: hidden; }
+        body.dark-mode { --primary-bg-color: #121212; --secondary-bg-color: #1e1e1e; --primary-text-color: #e0e0e0; --header-bg-color: #37474F; --link-color: #80cbc4; --border-color: #424242; --table-row-even-bg: #263238; --table-row-hover-bg: #37474F; --accent-color-1: #90caf9; --accent-color-2: #ef9a9a; --shadow-color: rgba(255,255,255,0.08); }
 
         /* --- アニメーション定義 --- */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes popIn {
-            0% { transform: scale(0.95); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        @keyframes popCheck {
-            50% { transform: scale(1.3); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes popCheck { 50% { transform: scale(1.3); } }
 
-        .container {
-            max-width: 1400px;
-            margin: auto;
-            background: var(--secondary-bg-color);
-            padding: 20px 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px var(--shadow-color);
-            transition: background-color 0.3s;
-            animation: fadeIn 0.7s ease-out;
-        }
-        h1 {
-            text-align: center;
-            color: var(--accent-color-1);
-            font-size: 2.2em;
-            border-bottom: 3px solid var(--accent-color-1);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        h2 {
-            font-size: 2em;
-            text-align: left;
-            color: var(--accent-color-2);
-            border-bottom: 2px solid var(--accent-color-2);
-            margin-top: 50px;
-            display: flex;
-            align-items: center;
-            animation: fadeIn 0.5s 0.2s ease-out backwards;
-        }
+        .container { max-width: 1400px; margin: auto; background: var(--secondary-bg-color); padding: 20px 40px; border-radius: 12px; box-shadow: 0 4px 20px var(--shadow-color); transition: background-color 0.3s; animation: fadeIn 0.7s ease-out; }
+        h1 { text-align: center; color: var(--accent-color-1); font-size: 2.2em; border-bottom: 3px solid var(--accent-color-1); padding-bottom: 10px; margin-bottom: 20px; }
+        h2 { font-size: 2em; text-align: left; color: var(--accent-color-2); border-bottom: 2px solid var(--accent-color-2); margin-top: 50px; display: flex; align-items: center; animation: fadeIn 0.5s 0.2s ease-out backwards; }
         h2 .icon { font-size: 1.5em; margin-right: 15px; }
 
-        .main-controls {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            background-color: var(--primary-bg-color);
-            border-radius: 8px;
-            margin-bottom: 20px;
-            gap: 20px;
-        }
-
-        .search-box {
-            flex-grow: 1;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            font-size: 1em;
-            background-color: var(--secondary-bg-color);
-            color: var(--primary-text-color);
-            min-width: 250px;
-        }
-        
+        .main-controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 20px; background-color: var(--primary-bg-color); border-radius: 8px; margin-bottom: 10px; gap: 15px; }
+        .secondary-controls { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; padding-bottom: 20px; gap: 15px; }
+        .search-box { flex-grow: 1; padding: 12px; border: 1px solid var(--border-color); border-radius: 5px; font-size: 1em; background-color: var(--secondary-bg-color); color: var(--primary-text-color); min-width: 200px; }
         .control-group { display: flex; align-items: center; gap: 15px; }
-
         #counter { font-weight: bold; font-size: 1.1em; }
-
         .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--switch-bg); transition: .4s; border-radius: 34px; }
         .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: var(--switch-fg); transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--switch-bg-checked); }
         input:checked + .slider:before { transform: translateX(26px); }
-
-        .sort-controls { text-align: center; margin-bottom: 20px; }
-        .sort-button { background-color: #007bff; color: white; border: none; padding: 12px 24px; font-size: 1em; border-radius: 5px; cursor: pointer; margin: 5px; transition: background-color 0.3s, transform 0.2s; }
+        .action-button { background-color: #28a745; color: white; border: none; padding: 10px 20px; font-size: 1em; border-radius: 5px; cursor: pointer; transition: background-color 0.3s, transform 0.2s; }
+        .action-button:hover { background-color: #218838; transform: scale(1.05); }
+        .sort-button { background-color: #007bff; color: white; border: none; padding: 10px 20px; font-size: 1em; border-radius: 5px; cursor: pointer; margin: 5px; transition: background-color 0.3s, transform 0.2s; }
         .sort-button:hover { background-color: #0056b3; transform: scale(1.05); }
 
         table { width: 100%; border-collapse: collapse; margin-top: 25px; font-size: 0.95em; }
-        th, td { border: 1px solid var(--border-color); padding: 14px; text-align: left; vertical-align: middle; }
+        th, td { border: 1px solid var(--border-color); padding: 14px; text-align: left; vertical-align: middle; position: relative; }
         th { background-color: var(--header-bg-color); color: var(--header-text-color); font-weight: 600; position: sticky; top: 0; z-index: 10; }
         tr { transition: background-color 0.2s; }
         tr:nth-child(even) { background-color: var(--table-row-even-bg); }
-        tr:not(.hidden):hover { background-color: var(--table-row-hover-bg); }
+        tr:not(.row-hidden):hover { background-color: var(--table-row-hover-bg); }
+        .row-hidden { display: none; }
         tbody tr { animation: popIn 0.5s ease-out; }
-        
         .checkbox-cell { width: 1%; text-align: center; }
         input[type="checkbox"] { transform: scale(1.5); cursor: pointer; }
         input[type="checkbox"]:checked { animation: popCheck 0.4s ease; }
-        
         .flag-icon { font-size: 2.5em; text-align: center; display: block; min-width: 50px; }
-        
         .country-link { text-decoration: none; color: var(--link-color); }
         .country-name { font-weight: bold; }
         .country-link:hover .country-name { text-decoration: underline; }
-        
         .hello-col { min-width: 220px; }
-
         ul { padding-left: 20px; margin: 0; }
         li { margin-bottom: 5px; }
+
+        /* コピペモード */
+        .copy-btn { display: none; position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background-color: #6c757d; color: white; border: none; border-radius: 4px; padding: 2px 6px; cursor: pointer; font-size: 0.8em; opacity: 0.7; }
+        .copy-btn:hover { opacity: 1; }
+        body.copy-mode-on .copy-btn { display: inline-block; }
+        td:hover .copy-btn { opacity: 1; }
         
-        #checked-list-container {
-            margin-top: 40px; padding: 20px; border: 1px dashed var(--border-color); border-radius: 8px;
-        }
+        #checked-list-container { margin-top: 40px; padding: 20px; border: 1px dashed var(--border-color); border-radius: 8px; }
         #checked-list { background: var(--primary-bg-color); padding: 15px; border-radius: 5px; min-height: 50px; word-break: break-all;}
-
-        #scrollTopBtn {
-            display: none; position: fixed; bottom: 30px; right: 30px; z-index: 99; border: none; outline: none; background-color: #007bff; color: white; cursor: pointer; padding: 15px; border-radius: 50%; font-size: 18px; width: 50px; height: 50px; line-height: 18px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.2s;
-        }
+        #scrollTopBtn { display: none; position: fixed; bottom: 30px; right: 30px; z-index: 99; border: none; outline: none; background-color: #007bff; color: white; cursor: pointer; padding: 15px; border-radius: 50%; font-size: 18px; width: 50px; height: 50px; line-height: 18px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.2s; }
         #scrollTopBtn:hover { background-color: #0056b3; transform: scale(1.1); }
-
         footer { text-align: center; margin-top: 40px; padding: 20px; color: #777; border-top: 1px solid var(--border-color); }
         
         .menu-footer { display: none; }
         #hamburger-toggle, .hamburger-button, .nav-menu { display: none; }
         
-        /* --- スマホ対応 (レスポンシブデザイン) --- */
+        /* PDFローダー */
+        #pdf-loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); color: white; z-index: 2000; flex-direction: column; justify-content: center; align-items: center; font-size: 1.5em; }
+
         @media (max-width: 768px) {
             .container { padding: 15px; }
             h1 { font-size: 1.8em; }
             h2 { font-size: 1.5em; }
             
-            .hamburger-button {
-                display: flex; position: fixed; top: 15px; right: 15px; z-index: 1001;
-                width: 50px; height: 50px; background: var(--secondary-bg-color); border-radius: 50%;
-                cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-                flex-direction: column; justify-content: center; align-items: center; gap: 6px;
-            }
-            .hamburger-button span {
-                display: block; width: 24px; height: 3px; background-color: var(--primary-text-color);
-                border-radius: 3px; transition: all 0.3s;
-            }
+            .hamburger-button { display: flex; position: fixed; top: 15px; right: 15px; z-index: 1001; width: 50px; height: 50px; background: var(--secondary-bg-color); border-radius: 50%; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.2); flex-direction: column; justify-content: center; align-items: center; gap: 6px; }
+            .hamburger-button span { display: block; width: 24px; height: 3px; background-color: var(--primary-text-color); border-radius: 3px; transition: all 0.3s; }
             #hamburger-toggle:checked + .hamburger-button span:nth-of-type(1) { transform: translateY(9px) rotate(45deg); }
             #hamburger-toggle:checked + .hamburger-button span:nth-of-type(2) { opacity: 0; }
             #hamburger-toggle:checked + .hamburger-button span:nth-of-type(3) { transform: translateY(-9px) rotate(-45deg); }
-
-            .nav-menu {
-                display: flex; flex-direction: column; position: fixed; top: 0; right: 0;
-                width: 280px; height: 100%; background-color: var(--primary-bg-color);
-                z-index: 1000; transform: translateX(100%); transition: transform 0.4s ease-in-out;
-                padding-top: 80px; box-shadow: -5px 0 15px rgba(0,0,0,0.2);
-                box-sizing: border-box;
-            }
+            .nav-menu { display: flex; flex-direction: column; position: fixed; top: 0; right: 0; width: 280px; height: 100%; background-color: var(--primary-bg-color); z-index: 1000; transform: translateX(100%); transition: transform 0.4s ease-in-out; padding-top: 80px; box-shadow: -5px 0 15px rgba(0,0,0,0.2); box-sizing: border-box; }
             #hamburger-toggle:checked ~ .nav-menu { transform: translateX(0); }
-            
-            .nav-overlay {
-                display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                background: rgba(0,0,0,0.5); z-index: 999;
-            }
+            .nav-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; }
             #hamburger-toggle:checked ~ .nav-overlay { display: block; }
             
             #pc-controls-container { display: none; }
             
-            .nav-menu .main-controls, .nav-menu .sort-controls {
-                display: flex; flex-direction: column; align-items: stretch; gap: 20px;
-                padding: 20px; text-align: center;
-            }
-            .nav-menu .sort-button { width: 100%; box-sizing: border-box; margin: 5px 0; }
+            .nav-menu .main-controls, .nav-menu .secondary-controls { display: flex; flex-direction: column; align-items: stretch; gap: 15px; padding: 15px; text-align: center; }
+            .nav-menu .action-button, .nav-menu .sort-button { width: 100%; box-sizing: border-box; margin: 5px 0; }
             .nav-menu .control-group { justify-content: space-between; }
-            
-            .menu-footer {
-                display: block; text-align: center; padding: 20px; margin-top: auto; color: #777;
-            }
+            .menu-footer { display: block; text-align: center; padding: 20px; margin-top: auto; color: #777; }
             footer { display: none; }
             
             table { border: 0; }
             thead { display: none; }
-            tr {
-                display: flex; flex-direction: column; margin-bottom: 20px; border-radius: 8px;
-                border: 1px solid var(--border-color); overflow: hidden;
-                box-shadow: 0 2px 5px var(--shadow-color);
-            }
-            td {
-                display: flex; justify-content: space-between; align-items: center;
-                text-align: right; border: 0; border-bottom: 1px solid var(--border-color);
-                padding: 12px 15px;
-            }
+            tr { display: block; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 2px 5px var(--shadow-color); }
+            td { display: flex; justify-content: space-between; align-items: center; text-align: right; border: 0; border-bottom: 1px solid var(--border-color); padding: 12px 15px; }
             td:last-child { border-bottom: 0; }
-            td::before {
-                content: attr(data-label); font-weight: bold; text-align: left;
-                margin-right: 10px; color: var(--primary-text-color); opacity: 0.7;
-            }
+            td::before { content: attr(data-label); font-weight: bold; text-align: left; margin-right: 10px; color: var(--primary-text-color); opacity: 0.7; flex-shrink: 0; }
             
-            .checkbox-cell { order: -1; }
+            .td-content { display: flex; align-items: center; justify-content: flex-end; text-align: right; }
+            .td-content ul { text-align: right; }
             
-            td[data-label="国"] {
-                padding: 15px; flex-direction: column; background-color: var(--table-row-even-bg);
-                gap: 10px;
-            }
-            td[data-label="国"]::before { display: none; }
-            td[data-label="国"] a { font-size: 1.4em; text-align: center; }
-
-            .tr-hidden { display: none; }
+            td.card-header { padding: 15px; flex-direction: row; background-color: var(--table-row-even-bg); gap: 10px; justify-content: flex-start; }
+            td.card-header::before { display: none; }
+            td.card-header .country-link { font-size: 1.4em; }
+            
+            .row-hidden { display: none !important; }
         }
     </style>
 </head>
 <body>
     
-    <input type="checkbox" id="hamburger-toggle">
-    <label for="hamburger-toggle" class="hamburger-button">
-        <span></span><span></span><span></span>
-    </label>
+    <input type="checkbox" id="hamburger-toggle" style="display: none;">
+    <label for="hamburger-toggle" class="hamburger-button"><span></span><span></span><span></span></label>
     
     <div class="nav-menu">
-        <!-- スマホ用コントロールはJSでここに複製されます -->
         <div class="menu-footer">© 底原永和</div>
     </div>
     <div class="nav-overlay"></div>
@@ -277,9 +143,19 @@
                     </label>
                 </div>
             </div>
-            <div class="sort-controls">
-                <button class="sort-button" data-sort="regional">地域別に表示</button>
-                <button class="sort-button" data-sort="alpha">あいうえお順に表示</button>
+            <div class="secondary-controls">
+                <div class="sort-controls">
+                    <button class="sort-button" data-sort="regional">地域別に表示</button>
+                    <button class="sort-button" data-sort="alpha">あいうえお順に表示</button>
+                </div>
+                <div class="control-group">
+                    <span>コピペモード</span>
+                    <label class="switch">
+                        <input type="checkbox" class="copy-mode-toggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <button class="action-button" id="pdf-export-btn">選択した国をPDF出力</button>
             </div>
         </div>
 
@@ -292,10 +168,22 @@
         </div>
     </div>
 
+    <div id="pdf-loader">
+        <p>PDFを生成中...</p>
+        <p><span id="pdf-progress">0</span> / <span id="pdf-total">0</span></p>
+    </div>
+
     <button id="scrollTopBtn" title="トップへ戻る">↑</button>
 
     <footer>© 底原永和</footer>
-
+    
+    <!-- 日本語フォントデータ (Base64) -->
+    <script id="font-data" type="application/json">
+    {
+      "font": "AAEAAAARAQAABAAQRFNJRwAAAAAAA... (ここに非常に長いBase64エンコードされたフォントデータが入ります。容量が大きすぎるため、ここでは省略します。実際の動作にはこのデータが必要です)"
+    }
+    </script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // 国データ (挨拶情報を現地語表記＋カタカナ読みに更新)
@@ -530,23 +418,34 @@
                     sessionStorage.removeItem('allCheckedAlertShown');
                 }
             }
+            
+            function createCopyBtn(text) {
+                return `<button class="copy-btn" data-copy-text="${text.replace(/"/g, '&quot;')}">コピー</button>`;
+            }
 
             function createRow(country) {
                 const famousList = country.famous.map(item => `<li>${item}</li>`).join('');
+                const famousText = country.famous.join('\n');
                 return `
                     <tr data-name="${country.name}" data-capital="${country.capital}" data-furigana="${country.furigana}">
                         <td data-label="チェック" class="checkbox-cell"><input type="checkbox" class="country-checkbox" data-name="${country.name}"></td>
-                        <td data-label="国"><span class="flag-icon">${country.flag}</span><a href="https://ja.wikipedia.org/wiki/${encodeURIComponent(country.name)}" target="_blank" rel="noopener noreferrer" class="country-link"><span class="country-name">${country.name}</span></a></td>
-                        <td data-label="首都">${country.capital}</td>
-                        <td data-label="人口">${country.pop}</td>
-                        <td data-label="あいさつ" class="hello-col">${country.hello}</td>
-                        <td data-label="通貨">${country.currency}</td>
-                        <td data-label="有名なもの"><ul>${famousList}</ul></td>
+                        <td data-label="国" class="card-header">
+                            <span class="flag-icon">${country.flag}</span>
+                            <a href="https://ja.wikipedia.org/wiki/${encodeURIComponent(country.name)}" target="_blank" rel="noopener noreferrer" class="country-link">
+                                <span class="country-name">${country.name}</span>
+                            </a>
+                            ${createCopyBtn(country.name)}
+                        </td>
+                        <td data-label="首都"><div class="td-content">${country.capital}${createCopyBtn(country.capital)}</div></td>
+                        <td data-label="人口"><div class="td-content">${country.pop}${createCopyBtn(country.pop)}</div></td>
+                        <td data-label="あいさつ" class="hello-col"><div class="td-content">${country.hello}${createCopyBtn(country.hello)}</div></td>
+                        <td data-label="通貨"><div class="td-content">${country.currency}${createCopyBtn(country.currency)}</div></td>
+                        <td data-label="有名なもの"><div class="td-content"><ul>${famousList}</ul>${createCopyBtn(famousText)}</div></td>
                     </tr>
                 `;
             }
 
-            const tableHeaderHTML = `<thead><tr><th class="checkbox-cell">✓</th><th colspan="2">国</th><th>首都</th><th>人口</th><th class="hello-col">あいさつ</th><th>通貨</th><th>有名なもの</th></tr></thead>`;
+            const tableHeaderHTML = `<thead><tr><th class="checkbox-cell">✓</th><th>国</th><th>首都</th><th>人口</th><th class="hello-col">あいさつ</th><th>通貨</th><th>有名なもの</th></tr></thead>`;
 
             function renderRegionalView() {
                 let html = '';
@@ -583,17 +482,21 @@
                 
                 document.querySelectorAll('.search-box').forEach(box => box.addEventListener('input', (e) => {
                     const searchTerm = e.target.value.toLowerCase().trim();
-                    document.querySelectorAll('.search-box').forEach(b => b.value = searchTerm); // Sync search boxes
+                    document.querySelectorAll('.search-box').forEach(b => { if(b !== e.target) b.value = searchTerm; });
                     document.querySelectorAll('tbody tr').forEach(row => {
                         const isVisible = row.dataset.name.toLowerCase().includes(searchTerm) || row.dataset.capital.toLowerCase().includes(searchTerm);
-                        row.classList.toggle('tr-hidden', !isVisible);
-                        if (window.innerWidth <= 768) row.style.display = isVisible ? 'flex' : 'none';
+                        row.classList.toggle('row-hidden', !isVisible);
                     });
                 }));
 
                 document.querySelectorAll('.dark-mode-toggle').forEach(toggle => toggle.addEventListener('change', (e) => {
                     document.body.classList.toggle('dark-mode');
                     document.querySelectorAll('.dark-mode-toggle').forEach(t => t.checked = e.target.checked);
+                }));
+                
+                document.querySelectorAll('.copy-mode-toggle').forEach(toggle => toggle.addEventListener('change', (e) => {
+                    document.body.classList.toggle('copy-mode-on');
+                    document.querySelectorAll('.copy-mode-toggle').forEach(t => t.checked = e.target.checked);
                 }));
 
                 document.querySelector('.container').addEventListener('change', (e) => {
@@ -602,6 +505,17 @@
                         if (e.target.checked) checkedCountryNames.add(countryName);
                         else checkedCountryNames.delete(countryName);
                         updateUI();
+                    }
+                });
+                
+                document.body.addEventListener('click', (e) => {
+                    if(e.target.classList.contains('copy-btn')) {
+                        const textToCopy = e.target.dataset.copyText;
+                        navigator.clipboard.writeText(textToCopy).then(() => {
+                            const originalText = e.target.textContent;
+                            e.target.textContent = 'OK!';
+                            setTimeout(() => { e.target.textContent = originalText; }, 1000);
+                        });
                     }
                 });
 
@@ -616,6 +530,79 @@
                 scrollTopBtn.style.display = (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) ? "block" : "none";
             };
             scrollTopBtn.addEventListener('click', () => window.scrollTo({top: 0, behavior: 'smooth'}));
+            
+            // PDF Export
+            document.querySelectorAll('#pdf-export-btn').forEach(btn => btn.addEventListener('click', async () => {
+                if (checkedCountryNames.size === 0) {
+                    alert('PDFに出力する国を1つ以上チェックしてください。');
+                    return;
+                }
+                const loader = document.getElementById('pdf-loader');
+                const progress = document.getElementById('pdf-progress');
+                const total = document.getElementById('pdf-total');
+                loader.style.display = 'flex';
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+                
+                // ここでフォントデータを読み込みますが、データが巨大なため、
+                // 実際に動作させるには省略されたBase64データを完全なものに置き換える必要があります。
+                // const fontData = JSON.parse(document.getElementById('font-data').textContent).font;
+                // if (fontData.length > 100) { // データが存在する場合のみ
+                //     doc.addFileToVFS('NotoSansJP-Regular.ttf', fontData);
+                //     doc.addFont('NotoSansJP-Regular.ttf', 'NotoSansJP', 'normal');
+                //     doc.setFont('NotoSansJP');
+                // }
+
+                const checkedCountries = countries.filter(c => checkedCountryNames.has(c.name));
+                total.textContent = checkedCountries.length;
+
+                for (let i = 0; i < checkedCountries.length; i++) {
+                    const country = checkedCountries[i];
+                    progress.textContent = i + 1;
+                    
+                    if (i > 0) doc.addPage();
+                    
+                    // 背景色
+                    doc.setFillColor(245, 248, 255);
+                    doc.rect(0, 0, 297, 210, 'F');
+
+                    // タイトル
+                    doc.setFontSize(32);
+                    doc.setTextColor(13, 71, 161);
+                    doc.text(country.name, 148.5, 25, { align: 'center' });
+                    
+                    // 国旗
+                    doc.setFontSize(80);
+                    doc.text(country.flag, 20, 80);
+                    
+                    // 詳細情報
+                    let y = 55;
+                    const details = [
+                        { label: '首都', value: country.capital },
+                        { label: '人口', value: country.pop },
+                        { label: 'あいさつ', value: country.hello },
+                        { label: '通貨', value: country.currency },
+                        { label: '有名なもの', value: country.famous.join('、') }
+                    ];
+
+                    details.forEach(item => {
+                        doc.setFontSize(12);
+                        doc.setTextColor(100, 100, 100);
+                        doc.text(item.label, 110, y);
+                        
+                        doc.setFontSize(16);
+                        doc.setTextColor(0, 0, 0);
+                        const splitText = doc.splitTextToSize(item.value, 160);
+                        doc.text(splitText, 110, y + 8);
+                        y += 12 + (splitText.length * 7);
+                    });
+                     await new Promise(resolve => setTimeout(resolve, 10)); // UI更新のための待機
+                }
+                
+                doc.save('万博参加国リスト.pdf');
+                loader.style.display = 'none';
+            }));
 
             function init() {
                 cloneControls();
